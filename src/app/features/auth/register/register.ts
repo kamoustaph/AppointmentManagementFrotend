@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { HttpErrorResponse } from '@angular/common/http';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { Auth } from '../../../core/services/auth';
+import Swal from 'sweetalert2';
 
 export interface RegistrationData {
   username: string;
@@ -73,8 +74,11 @@ export class Register implements OnInit {
       },
       error: (error) => {
         console.error('Failed to load roles', error);
-        this.errorMessage =
-          'Impossible de charger les rôles. Veuillez réessayer.';
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Impossible de charger les rôles. Veuillez réessayer.',
+        });
       },
     });
   }
@@ -91,13 +95,21 @@ export class Register implements OnInit {
     this.errorMessage = null;
 
     if (this.registerForm.invalid) {
-      this.errorMessage = 'Veuillez remplir tous les champs correctement.';
+      Swal.fire({
+        icon: 'error',
+        title: 'Formulaire invalide',
+        text: 'Veuillez remplir tous les champs correctement.',
+      });
       return;
     }
 
     const selectedRole = this.registerForm.value.role;
     if (!selectedRole) {
-      this.errorMessage = 'Veuillez sélectionner un rôle.';
+      Swal.fire({
+        icon: 'error',
+        title: 'Rôle manquant',
+        text: 'Veuillez sélectionner un rôle.',
+      });
       return;
     }
 
@@ -111,20 +123,33 @@ export class Register implements OnInit {
 
     this.authService.register(formData).subscribe({
       next: () => {
-        setTimeout(() => this.router.navigate(['/activation']), 2000);
+        Swal.fire({
+          icon: 'success',
+          title: 'Inscription réussie!',
+          text: 'Votre compte a été créé avec succès. Vous allez être redirigé vers la page d\'activation.',
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          willClose: () => {
+            this.router.navigate(['/activation']);
+          }
+        });
       },
       error: (error: HttpErrorResponse) => {
         console.error('Registration failed', error);
-        this.errorMessage =
-          error.error?.message ||
-          "Une erreur est survenue lors de l'inscription.";
-
+        
+        let errorMessage = "Une erreur est survenue lors de l'inscription.";
         if (error.status === 400) {
-          this.errorMessage =
-            'Données invalides. Vérifiez les informations saisies.';
+          errorMessage = 'Données invalides. Vérifiez les informations saisies.';
         } else if (error.status === 409) {
-          this.errorMessage = 'Cet email est déjà utilisé.';
+          errorMessage = 'Cet email est déjà utilisé.';
         }
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur d\'inscription',
+          text: errorMessage,
+        });
       },
     });
   }

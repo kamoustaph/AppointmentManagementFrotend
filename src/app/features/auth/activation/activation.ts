@@ -9,9 +9,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Auth } from '../../../core/services/auth';
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-activation',
-standalone: true,
+  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -21,21 +23,18 @@ standalone: true,
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    RouterLink
   ],  
   templateUrl: './activation.html',
   styleUrl: './activation.css'
 })
 export class Activation {
-private fb = inject(FormBuilder);
+  private fb = inject(FormBuilder);
 
-activationForm = this.fb.group({
+  activationForm = this.fb.group({
     activationCode: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]]
   });
 
   isLoading = false;
-  message = '';
-  isError = false;
 
   constructor(
     private authService: Auth,
@@ -50,23 +49,39 @@ activationForm = this.fb.group({
   }
 
   onSubmit() {
-    if (this.activationForm.invalid) return;
+    if (this.activationForm.invalid) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Code invalide',
+        text: 'Veuillez entrer un code d\'activation valide (6 caractères exactement).',
+      });
+      return;
+    }
 
     this.isLoading = true;
-    this.message = '';
-    this.isError = false;
-
     const activationCode = this.activationForm.value.activationCode!;
 
     this.authService.activateAccount(activationCode).subscribe({
       next: () => {
-        this.message = 'Compte activé avec succès ! Redirection...';
-        setTimeout(() => this.router.navigate(['/login']), 2000);
+        Swal.fire({
+          icon: 'success',
+          title: 'Activation réussie!',
+          text: 'Votre compte a été activé avec succès. Vous allez être redirigé vers la page de connexion.',
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          willClose: () => {
+            this.router.navigate(['/login']);
+          }
+        });
       },
       error: (error) => {
         this.isLoading = false;
-        this.isError = true;
-        this.message = error.message || "Erreur lors de l'activation. Veuillez réessayer.";
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur d\'activation',
+          text: error.error?.message || "Le code d'activation est invalide ou a expiré. Veuillez réessayer.",
+        });
       }
     });
   }

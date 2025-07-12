@@ -62,3 +62,31 @@ mat-card-actions {
     gap: 8px;
   }
 }
+.activation-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 20px;
+}
+
+.activation-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 24px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+mat-spinner {
+  margin: 0 auto;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0 0 0;
+}

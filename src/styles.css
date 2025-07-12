@@ -1,3 +1,26 @@
-@import "@angular/material/prebuilt-themes/indigo-pink.css"; /* Thème choisi lors de l'installation */
-@import "https://fonts.googleapis.com/icon?family=Material+Icons"; /* Icônes Material */
+@import "@angular/material/prebuilt-themes/indigo-pink.css"; 
+@import "https://fonts.googleapis.com/icon?family=Material+Icons"; 
 body { margin: 0; font-family: Roboto, height: 100%,"Helvetica Neue", sans-serif; }
+.swal2-popup {
+  font-family: 'Roboto', sans-serif;
+  border-radius: 8px !important;
+}
+
+.swal2-title {
+  font-size: 1.4rem !important;
+  color: #333 !important;
+}
+
+.swal2-confirm {
+  background-color: #3f51b5 !important;
+  border-radius: 4px !important;
+  padding: 8px 20px !important;
+}
+
+.swal2-cancel {
+  margin-right: 10px !important;
+}
+
+.swal2-timer-progress-bar {
+  background: rgba(63, 81, 181, 0.4) !important;
+}
