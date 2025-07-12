@@ -24,7 +24,7 @@ export interface RegistrationData {
 
 @Component({
   selector: 'app-register',
-standalone: true,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     CommonModule,
@@ -35,18 +35,20 @@ standalone: true,
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
-  ],  
+  ],
   templateUrl: './register.html',
   styleUrl: './register.css',
   animations: [
     trigger('fadeIn', [
       transition(':enter', [
         style({ opacity: 0, transform: 'translateY(20px)' }),
-        animate('600ms ease-out', 
-          style({ opacity: 1, transform: 'translateY(0)' }))
-      ])
-    ])
-  ]
+        animate(
+          '600ms ease-out',
+          style({ opacity: 1, transform: 'translateY(0)' })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class Register implements OnInit {
   private fb = inject(FormBuilder);
@@ -71,8 +73,9 @@ export class Register implements OnInit {
       },
       error: (error) => {
         console.error('Failed to load roles', error);
-        this.errorMessage = 'Impossible de charger les rôles. Veuillez réessayer.';
-      }
+        this.errorMessage =
+          'Impossible de charger les rôles. Veuillez réessayer.';
+      },
     });
   }
 
@@ -81,12 +84,12 @@ export class Register implements OnInit {
     name: ['', Validators.required],
     phone: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
     password: ['', [Validators.required, Validators.minLength(8)]],
-    role: [null as Role | null, Validators.required]
+    role: [null as Role | null, Validators.required],
   });
 
   onSubmit() {
     this.errorMessage = null;
-    
+
     if (this.registerForm.invalid) {
       this.errorMessage = 'Veuillez remplir tous les champs correctement.';
       return;
@@ -103,33 +106,41 @@ export class Register implements OnInit {
       name: this.registerForm.value.name!,
       phone: this.registerForm.value.phone!,
       password: this.registerForm.value.password!,
-      roleName: selectedRole.name 
+      roleName: selectedRole.name,
     };
 
     this.authService.register(formData).subscribe({
       next: () => {
-        this.router.navigate(['/activation']);
+        setTimeout(() => this.router.navigate(['/activation']), 2000);
       },
       error: (error: HttpErrorResponse) => {
         console.error('Registration failed', error);
-        this.errorMessage = error.error?.message || 'Une erreur est survenue lors de l\'inscription.';
-        
+        this.errorMessage =
+          error.error?.message ||
+          "Une erreur est survenue lors de l'inscription.";
+
         if (error.status === 400) {
-          this.errorMessage = 'Données invalides. Vérifiez les informations saisies.';
+          this.errorMessage =
+            'Données invalides. Vérifiez les informations saisies.';
         } else if (error.status === 409) {
           this.errorMessage = 'Cet email est déjà utilisé.';
         }
-      }
+      },
     });
   }
 
   getRoleDisplay(role: Role): string {
-    switch(role.name) {
-      case ERole.ADMIN: return 'Administrateur';
-      case ERole.MEDECIN: return 'Médecin';
-      case ERole.DOCTEUR: return 'Docteur';
-      case ERole.SECRETAIRE: return 'Secrétaire';
-      default: return role.name;
+    switch (role.name) {
+      case ERole.ADMIN:
+        return 'Administrateur';
+      case ERole.MEDECIN:
+        return 'Médecin';
+      case ERole.DOCTEUR:
+        return 'Docteur';
+      case ERole.SECRETAIRE:
+        return 'Secrétaire';
+      default:
+        return role.name;
     }
   }
 }
