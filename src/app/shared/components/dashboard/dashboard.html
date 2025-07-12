@@ -1,0 +1,22 @@
+<div class="dashboard-container" @cardAnimation>
+  <h2>Dashboard Overview</h2>
+  
+  <div class="cards-container">
+    <div 
+      *ngFor="let card of cards; let i = index" 
+      class="dashboard-card"
+      [@hoverAnimation]="hoverState[i]"
+      (mouseenter)="setHoverState(i, 'hover')"
+      (mouseleave)="setHoverState(i, 'normal')">
+      
+      <div class="card-icon" [style.background-color]="card.color">
+        <i [class]="card.icon"></i>
+      </div>
+      
+      <div class="card-content">
+        <h3>{{ card.title }}</h3>
+        <p class="count">{{ card.count }}</p>
+      </div>
+    </div>
+  </div>
+</div>

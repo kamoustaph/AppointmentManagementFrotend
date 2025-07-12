@@ -102,13 +102,8 @@ export class Login {
           timerProgressBar: true,
           showConfirmButton: false,
           willClose: () => {
-            const user = this.authService.getCurrentUser();
-            if (user?.roles.has('ROLE_ADMIN' as any)) {
-              this.router.navigate(['/admin/dashboard']);
-            } else {
-              this.router.navigate(['/dashboard']);
-            }
-          }
+        this.router.navigate(['/dashboard']);
+      }
         });
       },
       error: (error) => {
