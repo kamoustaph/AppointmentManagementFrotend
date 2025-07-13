@@ -6,9 +6,9 @@ export interface User {
   name: string;
   phone: string;
   password?: string;
-  roles: Set<Role>;
+  roles: Set<Role>; 
   actif: boolean;
-  role: Role;
+  role: Role; 
   deviceToken?: string;
 }
 

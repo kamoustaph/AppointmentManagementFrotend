@@ -2,16 +2,17 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { User, UserCredentials, UserRegistration } from '../models/user.model';
+import { User, UserCredentials } from '../models/user.model';
 import { Token } from './token';
 import { AuthResponse } from '../models/auth-response.model';
 import { Role, ERole } from '../models/role.model';
 import { RegistrationData } from '../../features/auth/register/register';
+
 @Injectable({
   providedIn: 'root'
 })
 export class Auth {
-private http = inject(HttpClient);
+  private http = inject(HttpClient);
   private router = inject(Router);
   private tokenService = inject(Token);
 
@@ -20,6 +21,10 @@ private http = inject(HttpClient);
 
   private apiUrl = 'http://localhost:8092/api/utilisateurs';
   private rolesUrl = 'http://localhost:8092/api/roles';
+
+  get isAuthenticated(): boolean {
+    return !!this.tokenService.getToken() && !this.tokenService.isTokenExpired();
+  }
 
   getRoles(): Observable<Role[]> {
     return this.http.get<Role[]>(this.rolesUrl);
@@ -31,7 +36,6 @@ private http = inject(HttpClient);
       roles: new Set([user.roleName]),
       actif: false
     };
-
     return this.http.post<{ message: string }>(`${this.apiUrl}/inscription`, registrationData);
   }
 
@@ -45,7 +49,8 @@ private http = inject(HttpClient);
   login(credentials: UserCredentials): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/connexion`, credentials).pipe(
       tap(response => {
-        this.tokenService.setToken(response.token);
+        const token = this.extractTokenFromResponse(response);
+        this.tokenService.setToken(token);
         this.setCurrentUser(response.user);
       })
     );
@@ -63,20 +68,68 @@ private http = inject(HttpClient);
 
   hasRole(role: ERole): boolean {
     const user = this.currentUserSubject.value;
-    return !!user?.roles?.has({ name: role } as Role);
+    return !!user?.roles && Array.from(user.roles).some(r => r.name === role);
   }
 
-  private setCurrentUser(userData: any): void {
+  refreshToken(): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh-token`, {
+      token: this.tokenService.getToken()
+    }).pipe(
+      tap(response => {
+        const token = this.extractTokenFromResponse(response);
+        this.tokenService.setToken(token);
+      })
+    );
+  }
+
+  private extractTokenFromResponse(response: AuthResponse): string {
+    if (!response.token) throw new Error('No token in response');
+    return typeof response.token === 'string' ? response.token : response.token.bearer;
+  }
+
+  private setCurrentUser(userData: {
+    id: number;
+    username: string;
+    name: string;
+    phone?: string;
+    roles: string[];
+    actif?: boolean;
+    role?: string;
+    deviceToken?: string;
+  }): void {
+    const rolesSet = new Set<Role>(
+      userData.roles.map(roleName => ({
+        id: this.getRoleId(roleName),
+        name: roleName as ERole
+      }))
+    );
+
     const user: User = {
       id: userData.id,
       username: userData.username,
       name: userData.name,
-      phone: userData.phone,
-      roles: new Set(userData.roles || []),
-      role: userData.role || { name: ERole.SECRETAIRE },
-      actif: userData.actif || false,
+      phone: userData.phone || '',
+      roles: rolesSet,
+      actif: userData.actif ?? false,
+      role: {
+        id: this.getRoleId(userData.role),
+        name: (userData.role as ERole) || ERole.SECRETAIRE
+      },
       deviceToken: userData.deviceToken
     };
+
     this.currentUserSubject.next(user);
+  }
+
+  private getRoleId(roleName?: string): number {
+    // Implémentez votre logique de mapping rôle -> ID ici
+    if (!roleName) return 0;
+    const roleMap: Record<string, number> = {
+      'SECRETAIRE': 1,
+      'MEDECIN': 2,
+      'PATIENT': 3,
+      'ADMIN': 4
+    };
+    return roleMap[roleName] || 0;
   }
 }
