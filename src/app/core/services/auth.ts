@@ -51,7 +51,10 @@ export class Auth {
       tap(response => {
         const token = this.extractTokenFromResponse(response);
         this.tokenService.setToken(token);
-        this.setCurrentUser(response.user);
+
+        if (response.user) {
+          this.setCurrentUser(response.user);
+        }
       })
     );
   }
@@ -83,8 +86,13 @@ export class Auth {
   }
 
   private extractTokenFromResponse(response: AuthResponse): string {
-    if (!response.token) throw new Error('No token in response');
-    return typeof response.token === 'string' ? response.token : response.token.bearer;
+    if (!response.token) {
+      throw new Error('Token JWT manquant dans la réponse');
+    }
+
+    return typeof response.token === 'string'
+      ? response.token
+      : response.token.bearer;
   }
 
   private setCurrentUser(userData: {
@@ -122,7 +130,6 @@ export class Auth {
   }
 
   private getRoleId(roleName?: string): number {
-    // Implémentez votre logique de mapping rôle -> ID ici
     if (!roleName) return 0;
     const roleMap: Record<string, number> = {
       'SECRETAIRE': 1,

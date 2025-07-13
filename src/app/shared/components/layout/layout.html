@@ -1,1 +1,20 @@
-<p>layout works!</p>
+<div class="layout-container">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h3>Menu</h3>
+    </div>
+    <nav class="sidebar-menu">
+      <a *ngFor="let item of menuItems" 
+         [routerLink]="item.route" 
+         routerLinkActive="active"
+         [class.active]="isActive(item.route)">
+        <i [class]="item.icon"></i>
+        <span>{{ item.name }}</span>
+      </a>
+    </nav>
+  </div>
+  
+  <div class="main-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

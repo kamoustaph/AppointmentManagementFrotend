@@ -93,7 +93,7 @@ export class Login {
     };
 
     this.authService.login(credentials).subscribe({
-      next: (response) => {
+      next: () => {
         Swal.fire({
           icon: 'success',
           title: 'Connexion réussie!',
@@ -102,13 +102,13 @@ export class Login {
           timerProgressBar: true,
           showConfirmButton: false,
           willClose: () => {
-        this.router.navigate(['/dashboard']);
-      }
+            this.router.navigate(['/dashboard']);
+          }
         });
       },
       error: (error) => {
         this.isLoading = false;
-        
+
         let errorMessage = "Une erreur est survenue lors de la connexion.";
         if (error.status === 401) {
           errorMessage = "Identifiants incorrects. Veuillez réessayer.";

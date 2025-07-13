@@ -1,4 +1,3 @@
-// auth-response.model.ts
 export interface AuthResponse {
   token: string | { bearer: string };
   user: {
@@ -6,9 +5,9 @@ export interface AuthResponse {
     username: string;
     name: string;
     phone?: string;
-    roles: string[]; // Le backend envoie les rôles comme string[]
+    roles: string[]; 
     actif?: boolean;
-    role?: string;   // Le backend envoie peut-être juste le nom du rôle
+    role?: string;   
     deviceToken?: string;
   };
   message?: string;

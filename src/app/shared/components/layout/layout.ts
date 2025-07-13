@@ -9,7 +9,8 @@ interface MenuItem {
 }
 @Component({
   selector: 'app-layout',
-  imports: [],
+   standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './layout.html',
   styleUrl: './layout.css'
 })
@@ -23,7 +24,6 @@ menuItems: MenuItem[] = [
   ];
 
   isActive(route: string): boolean {
-    // Implémentez la logique pour vérifier la route active si nécessaire
-    return false;
+    return window.location.pathname === route;
   }
 }
