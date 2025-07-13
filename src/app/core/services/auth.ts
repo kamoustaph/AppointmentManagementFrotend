@@ -26,6 +26,10 @@ export class Auth {
     return !!this.tokenService.getToken() && !this.tokenService.isTokenExpired();
   }
 
+  getToken(): string | null {
+    return this.tokenService.getToken();
+  }
+
   getRoles(): Observable<Role[]> {
     return this.http.get<Role[]>(this.rolesUrl);
   }

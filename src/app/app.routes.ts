@@ -8,26 +8,17 @@ import { roleguardGuard } from './shared/components/guards/roleguard-guard';
 import { ERole } from './core/models/role.model';
 
 export const routes: Routes = [
-  {
+ {
     path: '',
     component: Layout,
-    canActivate: [roleguardGuard],
+    canActivate: [roleguardGuard], 
     children: [
       { 
         path: 'dashboard', 
-        component: Dashboard,
-        canActivate: [roleguardGuard],
-        data: { roles: [ERole.SECRETAIRE, ERole.MEDECIN, ERole.ADMIN,ERole.MEDECIN ]}
+        component: Dashboard
       },
-      // Exemple de route protégée pour médecin
-      // { 
-      //   path: 'medecin', 
-      //   loadChildren: () => import('./features/medecin/medecin.routes'),
-      //   canActivate: [roleguardGuard],
-      //   data: { roles: [ERole.MEDECIN] }
-      // },
-    ]
-  },
+      // ... autres routes enfants
+    ]},
   {
     path: 'login',
     component: Login
