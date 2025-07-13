@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate, stagger, query } from '@angular/animations';
+import { Breadcrumb } from '../../../core/services/breadcrumb';
+import { BreadcrumbComponent } from "../breadcrumb/breadcrumb";
 
 @Component({
   selector: 'app-dashboard',
-standalone: true,
-  imports: [CommonModule],  
+  standalone: true,
+  imports: [CommonModule, BreadcrumbComponent],  
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   animations: [
@@ -29,8 +31,8 @@ standalone: true,
     ])
   ]
 })
-export class Dashboard {
-cards = [
+export class Dashboard implements OnInit {
+  cards = [
     { 
       title: 'Appointments', 
       count: 124, 
@@ -58,6 +60,14 @@ cards = [
   ];
 
   hoverState: string[] = ['normal', 'normal', 'normal', 'normal'];
+
+  constructor(private breadcrumbService: Breadcrumb) {}
+
+ ngOnInit() {
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Dashboard', url: '/dashboard' }
+    ]);
+  }
 
   setHoverState(index: number, state: string) {
     this.hoverState[index] = state;

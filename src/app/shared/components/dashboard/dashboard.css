@@ -7,6 +7,11 @@
   width: calc(100% - 100px); 
 }
 
+
+.dashboard-content {
+  margin-top: 1rem;
+}
+
 .dashboard-container h2 {
   color: #3f51b5;
   margin-bottom: 1.5rem;
@@ -65,9 +70,9 @@
   margin: 0 0 0.5rem 0;
   font-size: 1rem;
   font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal; /* Changé de nowrap à normal */
+  overflow: visible; /* Changé de hidden à visible */
+  text-overflow: clip; /* Changé de ellipsis à clip */
 }
 
 .card-content .count {

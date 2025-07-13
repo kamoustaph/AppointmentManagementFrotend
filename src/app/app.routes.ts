@@ -32,10 +32,7 @@ export const routes: Routes = [
     path: 'register',
     component: Register
   },
-   {
-    path: 'dashboard',
-    component: Dashboard
-  },
+
   {
     path: '',
     redirectTo: 'login',
