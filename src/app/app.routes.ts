@@ -21,16 +21,16 @@ export const routes: Routes = [
 
 
   {
-    path: 'register',
-    component: Register
+    path: 'login',
+    component: Login
   },
   {
     path: 'activation',
     component: Activation
   },
   {
-    path: 'login',
-    component: Login
+    path: 'register',
+    component: Register
   },
    {
     path: 'dashboard',
@@ -38,11 +38,16 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'register',
+    redirectTo: 'login',
+    pathMatch: 'full'
+  },
+   {
+    path: '',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
     path: '**',
-    redirectTo: 'register'
+    redirectTo: 'login'
   }
 ];

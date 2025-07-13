@@ -1,20 +1,29 @@
 <div class="layout-container">
-  <div class="sidebar">
+  <button class="mobile-menu-button" (click)="toggleMenu()" *ngIf="!isMenuOpen">
+    <i class="bi bi-list"></i>
+  </button>
+  <div class="menu-overlay" [class.active]="isMenuOpen" (click)="toggleMenu()"></div>
+
+  <div class="sidebar" [class.open]="isMenuOpen">
     <div class="sidebar-header">
-      <h3>Menu</h3>
+      <h3>FlowCalendar</h3>
+      <button class="menu-toggle" (click)="toggleMenu()">
+        <i class="bi bi-x"></i>
+      </button>
     </div>
     <nav class="sidebar-menu">
       <a *ngFor="let item of menuItems" 
          [routerLink]="item.route" 
          routerLinkActive="active"
-         [class.active]="isActive(item.route)">
+         [class.active]="isActive(item.route)"
+         (click)="closeMenuOnMobile()">
         <i [class]="item.icon"></i>
         <span>{{ item.name }}</span>
       </a>
     </nav>
   </div>
   
-  <div class="main-content">
+  <div class="main-content" [class.menu-open]="isMenuOpen">
     <router-outlet></router-outlet>
   </div>
 </div>

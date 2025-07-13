@@ -7,21 +7,36 @@ interface MenuItem {
   icon: string;
   route: string;
 }
+
 @Component({
   selector: 'app-layout',
-   standalone: true,
+  standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './layout.html',
-  styleUrl: './layout.css'
+  styleUrls: ['./layout.css']
 })
 export class Layout {
-menuItems: MenuItem[] = [
+  isMenuOpen = false;
+  
+  menuItems: MenuItem[] = [
     { name: 'Patient', icon: 'bi bi-people', route: '/patient' },
     { name: 'Medecin', icon: 'bi bi-person-badge', route: '/medecin' },
     { name: 'Appointment', icon: 'bi bi-calendar-check', route: '/appointment' },
     { name: 'MedecinSpecialiste', icon: 'bi bi-heart-pulse', route: '/medecin-specialiste' },
     { name: 'Notification', icon: 'bi bi-bell', route: '/notification' }
   ];
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+    // Empêche le défilement de la page lorsque le menu est ouvert
+    document.body.style.overflow = this.isMenuOpen ? 'hidden' : '';
+  }
+
+  closeMenuOnMobile() {
+    if (window.innerWidth <= 768) {
+      this.toggleMenu();
+    }
+  }
 
   isActive(route: string): boolean {
     return window.location.pathname === route;
