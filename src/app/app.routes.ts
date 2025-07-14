@@ -3,26 +3,19 @@ import { Register } from './features/auth/register/register';
 import { Activation } from './features/auth/activation/activation'; 
 import { Login } from './features/auth/login/login';
 import { Dashboard } from './shared/components/dashboard/dashboard';
-import { Layout } from './shared/components/layout/layout';
 import { roleguardGuard } from './shared/components/guards/roleguard-guard';
 import { ERole } from './core/models/role.model';
+import { PatientList } from './shared/components/patient/patient-list/patient-list';
+import { Layout } from './shared/components/layout/layout';
 
 export const routes: Routes = [
- {
-    path: '',
-    component: Layout,
-    canActivate: [roleguardGuard], 
-    children: [
-      { 
-        path: 'dashboard', 
-        component: Dashboard
-      },
-      // ... autres routes enfants
-    ]},
   {
-    path: 'login',
+
+    
+    path: '',
     component: Login
   },
+
   {
     path: 'activation',
     component: Activation
@@ -39,5 +32,25 @@ export const routes: Routes = [
   {
     path: '**',
     redirectTo: 'login'
-  }
+  },
+  {
+    path: '',
+    component: Layout,
+    canActivate: [roleguardGuard],
+    children: [
+      {
+        path: 'dashboard',
+        component: Dashboard
+      },
+      // { path: 'patient', component: PatientList },
+
+      {
+        path: 'patient',
+        component: PatientList,
+        canActivate: [roleguardGuard],
+        data: { roles: [ERole.ADMIN, ERole.MEDECIN] }  
+      }
+    ]
+  },
+  
 ];

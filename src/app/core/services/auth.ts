@@ -22,6 +22,20 @@ export class Auth {
   private apiUrl = 'http://localhost:8092/api/utilisateurs';
   private rolesUrl = 'http://localhost:8092/api/roles';
 
+  constructor() {
+    // Restaurer user à partir de localStorage au démarrage
+    const userJson = localStorage.getItem('user');
+    if (userJson) {
+      try {
+        const userData = JSON.parse(userJson);
+        this.setCurrentUser(userData);
+      } catch (e) {
+        console.error('Erreur lors de la restauration de l\'utilisateur', e);
+        localStorage.removeItem('user');
+      }
+    }
+  }
+
   get isAuthenticated(): boolean {
     return !!this.tokenService.getToken() && !this.tokenService.isTokenExpired();
   }
@@ -66,6 +80,7 @@ export class Auth {
   logout(): void {
     this.tokenService.clearToken();
     this.currentUserSubject.next(null);
+    localStorage.removeItem('user');  // Supprimer user stocké
     this.router.navigate(['/login']);
   }
 
@@ -75,7 +90,11 @@ export class Auth {
 
   hasRole(role: ERole): boolean {
     const user = this.currentUserSubject.value;
-    return !!user?.roles && Array.from(user.roles).some(r => r.name === role);
+    if (!user?.roles) return false;
+    return Array.from(user.roles).some(r => {
+      const normalized = r.name.startsWith('ROLE_') ? r.name.substring(5) : r.name;
+      return normalized === role;
+    });
   }
 
   refreshToken(): Observable<AuthResponse> {
@@ -131,6 +150,7 @@ export class Auth {
     };
 
     this.currentUserSubject.next(user);
+    localStorage.setItem('user', JSON.stringify(userData));  // Sauvegarde user dans localStorage
   }
 
   private getRoleId(roleName?: string): number {

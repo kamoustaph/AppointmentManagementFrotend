@@ -38,7 +38,7 @@ export interface RegistrationData {
     MatIconModule,
   ],
   templateUrl: './register.html',
-  styleUrl: './register.css',
+  styleUrls: ['./register.css'],
   animations: [
     trigger('fadeIn', [
       transition(':enter', [

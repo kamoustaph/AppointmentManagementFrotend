@@ -28,7 +28,6 @@ export class Layout {
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
-    // Empêche le défilement de la page lorsque le menu est ouvert
     document.body.style.overflow = this.isMenuOpen ? 'hidden' : '';
   }
 

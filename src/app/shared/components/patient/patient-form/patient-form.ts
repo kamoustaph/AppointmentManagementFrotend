@@ -11,8 +11,8 @@ import { CommonModule } from '@angular/common';
 import { Patient } from '../../../../core/models/patient.model';
 import { PatientService } from '../../../../core/services/patient';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { f } from "../../../../../../node_modules/@angular/material/icon-module.d-COXCrhrh";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatIconModule } from "@angular/material/icon";
 @Component({
   selector: 'app-patient-form',
     standalone: true,
@@ -27,8 +27,8 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
     MatDatepickerModule,
     MatNativeDateModule,
     MatSnackBarModule,
-    f,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatIconModule
 ],
   templateUrl: './patient-form.html',
   styleUrl: './patient-form.css'
