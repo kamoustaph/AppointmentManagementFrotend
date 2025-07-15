@@ -1,7 +1,7 @@
 <mat-card class="patient-card">
-  <mat-card-header>
-    <mat-card-title>Gestion des Patients</mat-card-title>
-    <button mat-raised-button color="primary" (click)="openCreateDialog()">
+  <mat-card-header class="card-header">
+    <mat-card-title class="card-title">Gestion des Patients</mat-card-title>
+    <button mat-raised-button color="primary" (click)="openCreateDialog()" class="new-patient-btn">
       <mat-icon>add</mat-icon> Nouveau Patient
     </button>
   </mat-card-header>
@@ -38,40 +38,34 @@
 
     <div class="table-container mat-elevation-z8" *ngIf="!isLoading; else loading">
       <table mat-table [dataSource]="dataSource">
-        <!-- Colonne ID -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef>ID</th>
           <td mat-cell *matCellDef="let patient">{{ patient.id }}</td>
         </ng-container>
 
-        <!-- Colonne Nom -->
         <ng-container matColumnDef="lastName">
           <th mat-header-cell *matHeaderCellDef>Nom</th>
           <td mat-cell *matCellDef="let patient">{{ patient.lastName }}</td>
         </ng-container>
 
-        <!-- Colonne Prénom -->
         <ng-container matColumnDef="firstName">
           <th mat-header-cell *matHeaderCellDef>Prénom</th>
           <td mat-cell *matCellDef="let patient">{{ patient.firstName }}</td>
         </ng-container>
 
-        <!-- Colonne Email -->
         <ng-container matColumnDef="email">
           <th mat-header-cell *matHeaderCellDef>Email</th>
           <td mat-cell *matCellDef="let patient">{{ patient.email }}</td>
         </ng-container>
 
-        <!-- Colonne Téléphone -->
         <ng-container matColumnDef="phoneNumber">
           <th mat-header-cell *matHeaderCellDef>Téléphone</th>
           <td mat-cell *matCellDef="let patient">{{ patient.phoneNumber }}</td>
         </ng-container>
 
-        <!-- Colonne Actions -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Actions</th>
-          <td mat-cell *matCellDef="let patient">
+          <td mat-cell *matCellDef="let patient" class="actions-cell">
             <button mat-icon-button color="primary" (click)="openEditDialog(patient)" matTooltip="Modifier">
               <mat-icon>edit</mat-icon>
             </button>
