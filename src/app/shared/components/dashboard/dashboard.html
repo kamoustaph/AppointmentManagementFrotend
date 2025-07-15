@@ -1,21 +1,37 @@
 <div class="dashboard-container">
   <app-breadcrumb></app-breadcrumb>
-  <div class="dashboard-content">
+  
+  <!-- <div class="dashboard-header">
+    <h2>Tableau de bord</h2>
+    <button mat-icon-button (click)="refreshData()" [disabled]="isLoading" matTooltip="Actualiser les données">
+      <mat-icon [class.spin]="isLoading">refresh</mat-icon>
+    </button>
+  </div> -->
+
+  <div class="dashboard-content" @cardAnimation>
     <div class="cards-container">
       <div 
         *ngFor="let card of cards; let i = index" 
         class="dashboard-card"
-        [@hoverAnimation]="hoverState[i]"
+        [@hoverAnimation]="hoverStates[i]"
+        [@pulseAnimation]="hoverStates[i]"
         (mouseenter)="setHoverState(i, 'hover')"
         (mouseleave)="setHoverState(i, 'normal')">
         
-        <div class="card-icon" [style.background-color]="card.color">
-          <i [class]="card.icon"></i>
+        <div class="card-icon" [style.background-color]="card.color" @pulseAnimation>
+          <mat-icon>{{card.icon}}</mat-icon>
         </div>
         
         <div class="card-content">
           <h3>{{ card.title }}</h3>
-          <p class="count">{{ card.count }}</p>
+          <div class="count-container">
+            <ng-container *ngIf="!card.loading; else loadingTemplate">
+              <p class="count">{{ card.count | number }}</p>
+            </ng-container>
+            <ng-template #loadingTemplate>
+              <mat-spinner diameter="24" strokeWidth="3"></mat-spinner>
+            </ng-template>
+          </div>
         </div>
       </div>
     </div>

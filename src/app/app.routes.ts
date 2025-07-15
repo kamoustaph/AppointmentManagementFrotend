@@ -40,7 +40,7 @@ export const routes: Routes = [
         path: 'patient',
         component: PatientList,
         canActivate: [roleguardGuard], 
-        data: { roles: [ERole.MEDECIN] },
+        data: { roles: [ERole.MEDECIN,ERole.PATIENT] },
       },
     ],
   },

@@ -127,7 +127,7 @@ export class Register implements OnInit {
           icon: 'success',
           title: 'Inscription réussie!',
           text: 'Votre compte a été créé avec succès. Vous allez être redirigé vers la page d\'activation.',
-          timer: 2000,
+          timer: 1000,
           timerProgressBar: true,
           showConfirmButton: false,
           willClose: () => {
