@@ -7,50 +7,49 @@ import { roleguardGuard } from './shared/components/guards/roleguard-guard';
 import { ERole } from './core/models/role.model';
 import { PatientList } from './shared/components/patient/patient-list/patient-list';
 import { Layout } from './shared/components/layout/layout';
-
 export const routes: Routes = [
+  // Routes publiques
   {
-
-    
-    path: '',
-    component: Login
+    path: 'login',
+    component: Login,
   },
-
   {
     path: 'activation',
-    component: Activation
+    component: Activation,
   },
   {
     path: 'register',
-    component: Register
+    component: Register,
   },
+
+  // Redirection par défaut vers /login
   {
     path: '',
     redirectTo: 'login',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
-  {
-    path: '**',
-    redirectTo: 'login'
-  },
+
   {
     path: '',
     component: Layout,
-    canActivate: [roleguardGuard],
+    canActivate: [roleguardGuard], // Vérifie l'authentification
     children: [
       {
         path: 'dashboard',
-        component: Dashboard
+        component: Dashboard,
       },
-      // { path: 'patient', component: PatientList },
-
       {
         path: 'patient',
         component: PatientList,
-        canActivate: [roleguardGuard],
-        data: { roles: [ERole.ADMIN, ERole.MEDECIN] }  
-      }
-    ]
+        canActivate: [roleguardGuard], // Vérifie aussi les rôles
+        data: { roles: [ERole.MEDECIN] },
+      },
+    ],
   },
-  
+
+  // Wildcard (doit être en dernier)
+  {
+    path: '**',
+    redirectTo: 'login',
+  },
 ];

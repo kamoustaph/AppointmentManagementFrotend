@@ -1,7 +1,7 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Auth } from '../services/auth';
 
@@ -9,11 +9,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(Auth);
   const router = inject(Router);
 
-  const token = auth.getToken();
-  console.log('[AuthInterceptor] Token:', token);
+  console.log(`[Interceptor] Intercepting request to: ${req.url}`);
 
+  const token = auth.getToken();
   if (!token) {
-    console.log('[AuthInterceptor] Pas de token, requête sans modification');
+    console.log('[Interceptor] No token found, proceeding without modification');
     return next(req);
   }
 
@@ -22,21 +22,19 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       Authorization: `Bearer ${token}`
     }
   });
-  console.log('[AuthInterceptor] Requête modifiée avec token');
 
   return next(authReq).pipe(
-    tap(event => {
-      // Optionnel : log event de réponse si besoin
-    }),
     catchError((error: HttpErrorResponse) => {
-      console.error('[AuthInterceptor] Erreur HTTP détectée:', error);
+      console.error('[Interceptor] Request failed:', error);
+      
       if (error.status === 401) {
-        console.warn('[AuthInterceptor] 401 Unauthorized détecté, déconnexion');
+        console.warn('[Interceptor] 401 Unauthorized detected, logging out');
         auth.logout();
         router.navigate(['/login'], {
           queryParams: { returnUrl: router.routerState.snapshot.url }
         });
       }
+      
       return throwError(() => error);
     })
   );

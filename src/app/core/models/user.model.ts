@@ -1,22 +1,16 @@
 import { Role } from "./role.model";
-
 export interface User {
-  id: number;
+  id: any;
   username: string;
   name: string;
-  phone: string;
-  password?: string;
-  roles: Set<Role>; 
+  roles: string[];
   actif: boolean;
-  role: Role; 
-  deviceToken?: string;
 }
 
 export interface UserCredentials {
   username: string;
   password: string;
 }
-
 export interface UserRegistration extends Omit<User, 'id' | 'roles' | 'actif'> {
   password: string;
   role: Role;

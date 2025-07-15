@@ -12,8 +12,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpErrorResponse } from '@angular/common/http';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { Auth } from '../../../core/services/auth';
 import Swal from 'sweetalert2';
+import { Auth } from '../../../core/services/auth';
 
 export interface RegistrationData {
   username: string;
@@ -60,19 +60,27 @@ export class Register implements OnInit {
   hidePassword = true;
   errorMessage: string | null = null;
 
+  registerForm = this.fb.group({
+    username: ['', [Validators.required, Validators.email]],
+    name: ['', Validators.required],
+    phone: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
+    password: ['', [Validators.required, Validators.minLength(8)]],
+    role: [null as Role | null, Validators.required],
+  });
+
   ngOnInit() {
     this.loadRoles();
   }
 
   loadRoles() {
     this.authService.getRoles().subscribe({
-      next: (roles) => {
+      next: (roles: Role[]) => {
         this.roles = roles;
         if (this.roles.length > 0) {
           this.registerForm.patchValue({ role: this.roles[0] });
         }
       },
-      error: (error) => {
+      error: (error: HttpErrorResponse) => {
         console.error('Failed to load roles', error);
         Swal.fire({
           icon: 'error',
@@ -82,14 +90,6 @@ export class Register implements OnInit {
       },
     });
   }
-
-  registerForm = this.fb.group({
-    username: ['', [Validators.required, Validators.email]],
-    name: ['', Validators.required],
-    phone: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
-    password: ['', [Validators.required, Validators.minLength(8)]],
-    role: [null as Role | null, Validators.required],
-  });
 
   onSubmit() {
     this.errorMessage = null;
@@ -114,10 +114,10 @@ export class Register implements OnInit {
     }
 
     const formData: RegistrationData = {
-      username: this.registerForm.value.username!,
-      name: this.registerForm.value.name!,
-      phone: this.registerForm.value.phone!,
-      password: this.registerForm.value.password!,
+      username: this.registerForm.value.username || '',
+      name: this.registerForm.value.name || '',
+      phone: this.registerForm.value.phone || '',
+      password: this.registerForm.value.password || '',
       roleName: selectedRole.name,
     };
 

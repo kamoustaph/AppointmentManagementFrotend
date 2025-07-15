@@ -1,14 +1,9 @@
 export interface AuthResponse {
-  token: string | { bearer: string };
-  user: {
-    id: number;
+  token: string;
+  user?: {
+    id: any;
     username: string;
     name: string;
-    phone?: string;
-    roles: string[]; 
-    actif?: boolean;
-    role?: string;   
-    deviceToken?: string;
+    roles: string[];
   };
-  message?: string;
 }
