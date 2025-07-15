@@ -1,0 +1,31 @@
+export interface Doctor {
+  id: number;
+  licenseNumber: string;
+  lastName: string;
+  firstName: string;
+  email: string;
+  phoneNumber: string;
+  birthDate?: string;
+  available: boolean;
+  timeSlots?: TimeSlot[];
+  specialties?: Specialty[];
+}
+
+export interface TimeSlot {
+  id: number;
+  // Ajoutez ici les autres propriétés de TimeSlot
+}
+
+export interface Specialty {
+  id: number;
+  name: string;
+  // Ajoutez ici les autres propriétés de Specialty
+}
+
+export interface Page<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+}
