@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router'; // Ajoutez Router
+import { MatIconModule } from '@angular/material/icon';
 
 interface MenuItem {
   name: string;
@@ -11,7 +12,7 @@ interface MenuItem {
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MatIconModule],
   templateUrl: './layout.html',
   styleUrls: ['./layout.css']
 })
@@ -19,12 +20,21 @@ export class Layout {
   isMenuOpen = false;
   
   menuItems: MenuItem[] = [
-    { name: 'Patient', icon: 'bi bi-people', route: '/patient' },
-    { name: 'Medecin', icon: 'bi bi-person-badge', route: '/medecin' },
-    { name: 'Appointment', icon: 'bi bi-calendar-check', route: '/appointment' },
-    { name: 'MedecinSpecialiste', icon: 'bi bi-heart-pulse', route: '/medecin-specialiste' },
-    { name: 'Notification', icon: 'bi bi-bell', route: '/notification' }
+    { name: 'Patient', icon: 'people', route: '/patient' },
+    { name: 'Medecin', icon: 'medical_services', route: '/medecin' },
+    { name: 'Appointment', icon: 'calendar_today', route: '/appointment' },
+    { name: 'MedecinSpecialiste', icon: 'healing', route: '/medecin-specialiste' },
+    { name: 'Notification', icon: 'notifications', route: '/notification' }
   ];
+
+  constructor(private router: Router) {} 
+
+  navigateToDashboard() {
+    this.router.navigate(['/dashboard']);
+    if (this.isMenuOpen) {
+      this.toggleMenu();
+    }
+  }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
