@@ -1,6 +1,15 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialogModule,
+} from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,11 +20,13 @@ import { CommonModule } from '@angular/common';
 import { Patient } from '../../../../core/models/patient.model';
 import { PatientService } from '../../../../core/services/patient';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { MatIconModule } from "@angular/material/icon";
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
+import { Breadcrumb } from '../../../../core/services/breadcrumb';
+import { BreadcrumbComponent } from "../../breadcrumb/breadcrumb";
 @Component({
   selector: 'app-patient-form',
-    standalone: true,
+  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -28,13 +39,14 @@ import { MatIconModule } from "@angular/material/icon";
     MatNativeDateModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
-    MatIconModule
+    MatIconModule,
+    BreadcrumbComponent
 ],
   templateUrl: './patient-form.html',
-  styleUrl: './patient-form.css'
+  styleUrl: './patient-form.css',
 })
 export class PatientForm implements OnInit {
- patientForm: FormGroup;
+  patientForm: FormGroup;
   isEditMode = false;
   isLoading = false;
 
@@ -42,26 +54,48 @@ export class PatientForm implements OnInit {
     private fb: FormBuilder,
     private patientService: PatientService,
     private dialogRef: MatDialogRef<PatientForm>,
-    @Inject(MAT_DIALOG_DATA) public data: { mode: 'create' | 'edit', patient?: Patient },
-    private snackBar: MatSnackBar
+    @Inject(MAT_DIALOG_DATA)
+    public data: { mode: 'create' | 'edit'; patient?: Patient },
+    private snackBar: MatSnackBar,
+    private breadcrumbService: Breadcrumb
   ) {
     this.patientForm = this.fb.group({
       id: [null],
       lastName: ['', [Validators.required, Validators.maxLength(50)]],
       firstName: ['', [Validators.required, Validators.maxLength(50)]],
-      email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]]
+      email: [
+        '',
+        [Validators.required, Validators.email, Validators.maxLength(100)],
+      ],
+      phoneNumber: [
+        '',
+        [Validators.required, Validators.pattern(/^[0-9]{10}$/)],
+      ],
     });
 
     this.isEditMode = this.data.mode === 'edit';
   }
 
   ngOnInit(): void {
+    this.setupBreadcrumb();
+
     if (this.isEditMode && this.data.patient) {
       this.patientForm.patchValue(this.data.patient);
     }
   }
+private setupBreadcrumb(): void {
+  const breadcrumbs = [
+    
+  ];
 
+  if (this.isEditMode) {
+    breadcrumbs.push({ label: 'Modifier Patient', url: '' });
+  } else {
+    breadcrumbs.push({ label: 'Nouveau Patient', url: '' });
+  }
+
+  this.breadcrumbService.setBreadcrumbs(breadcrumbs);
+}
   onSubmit(): void {
     if (this.patientForm.invalid) {
       return;
@@ -86,7 +120,9 @@ export class PatientForm implements OnInit {
       error: (error) => {
         console.error('Error:', error);
         this.snackBar.open(
-          `Erreur lors de ${this.isEditMode ? 'la modification' : 'la création'} du patient`,
+          `Erreur lors de ${
+            this.isEditMode ? 'la modification' : 'la création'
+          } du patient`,
           'Fermer',
           { duration: 3000 }
         );
@@ -94,7 +130,7 @@ export class PatientForm implements OnInit {
       },
       complete: () => {
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -104,7 +140,7 @@ export class PatientForm implements OnInit {
 
   getErrorMessage(controlName: string): string {
     const control = this.patientForm.get(controlName);
-    
+
     if (control?.hasError('required')) {
       return 'Ce champ est obligatoire';
     } else if (control?.hasError('email')) {
@@ -114,7 +150,7 @@ export class PatientForm implements OnInit {
     } else if (control?.hasError('maxlength')) {
       return `Maximum ${control.errors?.['maxlength'].requiredLength} caractères`;
     }
-    
+
     return '';
   }
 }

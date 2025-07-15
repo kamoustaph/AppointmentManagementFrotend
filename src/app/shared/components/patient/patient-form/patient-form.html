@@ -3,6 +3,8 @@
 </h2>
 
 <mat-dialog-content>
+  <app-breadcrumb></app-breadcrumb>
+
   <form [formGroup]="patientForm" (ngSubmit)="onSubmit()">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Nom</mat-label>

@@ -65,7 +65,7 @@ export class Dashboard implements OnInit {
 
  ngOnInit() {
     this.breadcrumbService.setBreadcrumbs([
-      { label: 'Dashboard', url: '/dashboard' }
+      { label: 'Dashboard', url: '/' }
     ]);
   }
 

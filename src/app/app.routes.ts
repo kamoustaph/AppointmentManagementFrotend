@@ -8,7 +8,6 @@ import { ERole } from './core/models/role.model';
 import { PatientList } from './shared/components/patient/patient-list/patient-list';
 import { Layout } from './shared/components/layout/layout';
 export const routes: Routes = [
-  // Routes publiques
   {
     path: 'login',
     component: Login,
@@ -22,7 +21,6 @@ export const routes: Routes = [
     component: Register,
   },
 
-  // Redirection par défaut vers /login
   {
     path: '',
     redirectTo: 'login',
@@ -32,7 +30,7 @@ export const routes: Routes = [
   {
     path: '',
     component: Layout,
-    canActivate: [roleguardGuard], // Vérifie l'authentification
+    canActivate: [roleguardGuard], 
     children: [
       {
         path: 'dashboard',
@@ -41,13 +39,12 @@ export const routes: Routes = [
       {
         path: 'patient',
         component: PatientList,
-        canActivate: [roleguardGuard], // Vérifie aussi les rôles
+        canActivate: [roleguardGuard], 
         data: { roles: [ERole.MEDECIN] },
       },
     ],
   },
 
-  // Wildcard (doit être en dernier)
   {
     path: '**',
     redirectTo: 'login',

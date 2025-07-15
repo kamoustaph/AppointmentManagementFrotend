@@ -15,6 +15,9 @@ import { Patient } from '../../../../core/models/patient.model';
 import { PatientService } from '../../../../core/services/patient';
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { PatientForm } from '../patient-form/patient-form';
+import { Breadcrumb } from '../../../../core/services/breadcrumb';
+import { BreadcrumbComponent } from "../../breadcrumb/breadcrumb";
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-patient-list',
@@ -30,8 +33,9 @@ import { PatientForm } from '../patient-form/patient-form';
     MatFormFieldModule,
     MatCardModule,
     MatTooltipModule,
-    MatProgressSpinnerModule
-],
+    MatProgressSpinnerModule,
+    BreadcrumbComponent
+  ],
   templateUrl: './patient-list.html',
   styleUrl: './patient-list.css'
 })
@@ -52,11 +56,19 @@ export class PatientList implements OnInit {
   constructor(
     private patientService: PatientService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private breadcrumbService: Breadcrumb 
   ) {}
 
   ngOnInit(): void {
+    this.setupBreadcrumb();
     this.loadPatients();
+  }
+
+  private setupBreadcrumb(): void {
+    this.breadcrumbService.setBreadcrumbs([
+      { label: 'Liste des Patients', url: '/patients' }
+    ]);
   }
 
   loadPatients(): void {
@@ -148,20 +160,35 @@ export class PatientList implements OnInit {
   }
 
   deletePatient(id: number): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce patient ?')) {
-      this.patientService.deletePatient(id).subscribe({
-        next: () => {
-          this.snackBar.open('Patient supprimé avec succès', 'Fermer', {
-            duration: 3000
-          });
-          this.loadPatients();
-        },
-        error: () => {
-          this.snackBar.open('Erreur lors de la suppression', 'Fermer', {
-            duration: 3000
-          });
-        }
-      });
-    }
+    Swal.fire({
+      title: 'Êtes-vous sûr ?',
+      text: "Vous ne pourrez pas annuler cette action !",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, supprimer !',
+      cancelButtonText: 'Annuler'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.patientService.deletePatient(id).subscribe({
+          next: () => {
+            Swal.fire(
+              'Supprimé !',
+              'Le patient a été supprimé.',
+              'success'
+            );
+            this.loadPatients();
+          },
+          error: () => {
+            Swal.fire(
+              'Erreur !',
+              'Une erreur est survenue lors de la suppression.',
+              'error'
+            );
+          }
+        });
+      }
+    });
   }
 }
