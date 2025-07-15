@@ -10,7 +10,7 @@ export class PatientService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8092/api/patients';
 
-  getAllPatients(page: number = 0, size: number = 10): Observable<Page<Patient>> {
+  getAllPatients(page: number = 0, size: number = 5): Observable<Page<Patient>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
@@ -18,7 +18,7 @@ export class PatientService {
     return this.http.get<Page<Patient>>(this.apiUrl, { params });
   }
 
-  searchByFullName(name: string, page: number = 0, size: number = 10): Observable<Page<Patient>> {
+  searchByFullName(name: string, page: number = 0, size: number = 5): Observable<Page<Patient>> {
     const params = new HttpParams()
       .set('name', name)
       .set('page', page.toString())
@@ -27,7 +27,7 @@ export class PatientService {
     return this.http.get<Page<Patient>>(`${this.apiUrl}/search/name`, { params });
   }
 
-  searchByPhoneNumber(phoneNumber: string, page: number = 0, size: number = 10): Observable<Page<Patient>> {
+  searchByPhoneNumber(phoneNumber: string, page: number = 0, size: number = 5): Observable<Page<Patient>> {
     const params = new HttpParams()
       .set('phoneNumber', phoneNumber)
       .set('page', page.toString())
@@ -36,7 +36,7 @@ export class PatientService {
     return this.http.get<Page<Patient>>(`${this.apiUrl}/search/phone`, { params });
   }
 
-  searchByEmail(email: string, page: number = 0, size: number = 10): Observable<Page<Patient>> {
+  searchByEmail(email: string, page: number = 0, size: number = 5): Observable<Page<Patient>> {
     const params = new HttpParams()
       .set('email', email)
       .set('page', page.toString())
@@ -53,7 +53,7 @@ export class PatientService {
       phoneNumber?: string
     },
     page: number = 0,
-    size: number = 10
+    size: number = 5
   ): Observable<Page<Patient>> {
     let params = new HttpParams()
       .set('page', page.toString())

@@ -43,7 +43,7 @@ export class PatientList implements OnInit {
   displayedColumns: string[] = ['id', 'lastName', 'firstName', 'email', 'phoneNumber', 'actions'];
   dataSource: Patient[] = [];
   totalElements = 0;
-  pageSize = 10;
+  pageSize = 5;
   currentPage = 0;
   searchCriteria = {
     lastName: '',
