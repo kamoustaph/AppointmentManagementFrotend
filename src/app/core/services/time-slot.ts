@@ -13,12 +13,26 @@ export class TimeSlotService {
 
   private formatTime(time: string): string {
     if (!time) return '';
-    // Convertit "12:00" en "12h00min"
+
+    // Cas 1: Format "12,0" ou "12,30" (virgule comme séparateur)
+    if (time.includes(',')) {
+      const [hours, minutes] = time.split(',');
+      const normalizedMinutes = minutes.length === 1 ? `${minutes}0` : minutes;
+      return `${hours}h${normalizedMinutes}min`;
+    }
+    
+    // Cas 2: Format "12:00" (deux-points comme séparateur)
     if (time.includes(':')) {
       const [hours, minutes] = time.split(':');
       return `${hours}h${minutes}min`;
     }
-    // Si déjà au bon format, ne rien faire
+
+    // Cas 3: Format "12h30" (manque 'min' à la fin)
+    if (time.includes('h') && !time.endsWith('min')) {
+      return `${time}min`;
+    }
+
+    // Cas 4: Format déjà correct "12h30min" ou autre format non reconnu
     return time;
   }
 
@@ -42,7 +56,6 @@ export class TimeSlotService {
       }))
     );
   }
-
   getAvailableTimeSlots(page: number = 0, size: number = 5): Observable<Page<TimeSlot>> {
     const params = new HttpParams()
       .set('page', page.toString())

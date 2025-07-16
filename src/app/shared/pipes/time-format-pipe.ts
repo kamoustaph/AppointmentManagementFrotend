@@ -7,15 +7,22 @@ export class TimeFormatPipe implements PipeTransform {
 
  transform(value: string): string {
     if (!value) return '';
-    
-    if (value.includes('h') && value.includes('min')) {
-      return value;
+
+    if (value.includes(',')) {
+      const [hours, minutes] = value.split(',');
+      const paddedMinutes = minutes.padEnd(2, '0'); 
+      return `${hours}h${paddedMinutes}min`;
     }
-        if (value.includes(':')) {
+    
+    if (value.includes(':')) {
       const [hours, minutes] = value.split(':');
       return `${hours}h${minutes}min`;
     }
-        return value;
+
+    if (value.includes('h') && !value.includes('min')) {
+      return `${value}min`;
+    }
+    return value;
   }
 
 }
