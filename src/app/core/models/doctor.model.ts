@@ -1,3 +1,5 @@
+import { Specialty } from "./specialty.model";
+
 export interface Doctor {
   id: number;
   licenseNumber: string;
@@ -16,11 +18,6 @@ export interface TimeSlot {
   // Ajoutez ici les autres propriétés de TimeSlot
 }
 
-export interface Specialty {
-  id: number;
-  name: string;
-  // Ajoutez ici les autres propriétés de Specialty
-}
 
 export interface Page<T> {
   content: T[];

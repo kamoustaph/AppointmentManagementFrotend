@@ -1,0 +1,19 @@
+/* src/app/modules/specialty/components/specialty-form/specialty-form.component.css */
+.full-width {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+mat-dialog-content {
+  padding: 20px 0;
+}
+
+mat-dialog-actions {
+  padding: 20px 0;
+  justify-content: flex-end;
+}
+
+mat-spinner {
+  display: inline-block;
+  margin-left: 8px;
+}

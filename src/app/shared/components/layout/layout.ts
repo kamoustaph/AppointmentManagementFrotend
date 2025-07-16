@@ -23,7 +23,7 @@ export class Layout {
     { name: 'Patient', icon: 'people', route: '/patient' },
     { name: 'Medecin', icon: 'medical_services', route: '/doctor' },
     { name: 'Appointment', icon: 'calendar_today', route: '/appointment' },
-    { name: 'MedecinSpecialiste', icon: 'healing', route: '/medecin-specialiste' },
+    { name: 'Specialiste', icon: 'healing', route: '/specialty' },
     { name: 'Notification', icon: 'notifications', route: '/notification' }
   ];
 

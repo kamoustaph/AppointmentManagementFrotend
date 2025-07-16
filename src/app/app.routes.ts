@@ -8,6 +8,7 @@ import { ERole } from './core/models/role.model';
 import { PatientList } from './shared/components/patient/patient-list/patient-list';
 import { Layout } from './shared/components/layout/layout';
 import { DoctorList } from './shared/components/doctor/doctor-list/doctor-list';
+import { SpecialtyList } from './shared/components/specialty/specialty-list/specialty-list';
 export const routes: Routes = [
   {
     path: 'login',
@@ -46,6 +47,12 @@ export const routes: Routes = [
       {
         path: 'doctor',
         component: DoctorList,
+        canActivate: [roleguardGuard], 
+        data: { roles: [ERole.MEDECIN,ERole.PATIENT] },
+      },
+      {
+        path: 'specialty',
+        component: SpecialtyList,
         canActivate: [roleguardGuard], 
         data: { roles: [ERole.MEDECIN,ERole.PATIENT] },
       },
