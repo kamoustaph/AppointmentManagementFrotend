@@ -1,0 +1,63 @@
+<!-- src/app/modules/time-slot/components/time-slot-form/time-slot-form.component.html -->
+<h2 mat-dialog-title>
+  {{ isEditMode ? 'Modifier un créneau horaire' : 'Créer un nouveau créneau horaire' }}
+</h2>
+
+<mat-dialog-content>
+  <app-breadcrumb></app-breadcrumb>
+
+  <form [formGroup]="timeSlotForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Date</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="slotDate" required>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="timeSlotForm.get('slotDate')?.invalid">
+        {{ getErrorMessage('slotDate') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Heure de début</mat-label>
+      <input matInput type="time" formControlName="startTime" required>
+      <mat-error *ngIf="timeSlotForm.get('startTime')?.invalid">
+        {{ getErrorMessage('startTime') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Heure de fin</mat-label>
+      <input matInput type="time" formControlName="endTime" required>
+      <mat-error *ngIf="timeSlotForm.get('endTime')?.invalid">
+        {{ getErrorMessage('endTime') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>ID Médecin</mat-label>
+      <input matInput formControlName="doctorId" type="number" required>
+      <mat-error *ngIf="timeSlotForm.get('doctorId')?.invalid">
+        {{ getErrorMessage('doctorId') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-slide-toggle formControlName="available" color="primary">
+      Disponible
+    </mat-slide-toggle>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Annuler</button>
+  <button 
+    mat-raised-button 
+    color="primary" 
+    (click)="onSubmit()"
+    [disabled]="timeSlotForm.invalid || isLoading"
+  >
+    {{ isEditMode ? 'Modifier' : 'Créer' }}
+    <mat-icon *ngIf="isLoading">
+      <mat-spinner diameter="20"></mat-spinner>
+    </mat-icon>
+  </button>
+</mat-dialog-actions>

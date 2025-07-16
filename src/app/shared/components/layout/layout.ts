@@ -24,7 +24,9 @@ export class Layout {
     { name: 'Medecin', icon: 'medical_services', route: '/doctor' },
     { name: 'Appointment', icon: 'calendar_today', route: '/appointment' },
     { name: 'Specialiste', icon: 'healing', route: '/specialty' },
-    { name: 'Notification', icon: 'notifications', route: '/notification' }
+    { name: 'Notification', icon: 'notifications', route: '/notification' },
+    { name: 'TimeSlot', icon: 'notifications', route: '/timeSlot' }
+
   ];
 
   constructor(private router: Router) {} 
