@@ -52,13 +52,12 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 })
 export class TimeSlotList implements OnInit{
 
-  displayedColumns: string[] = ['id', 'slotDate', 'startTime', 'endTime', 'available', 'doctorId', 'actions'];
+  displayedColumns: string[] = ['id', 'slotDate', 'startTime', 'endTime', 'available', 'actions'];
   dataSource: TimeSlot[] = [];
   totalElements = 0;
   pageSize = 5;
   currentPage = 0;
   searchCriteria = {
-    doctorId: undefined as number | undefined,
     available: undefined as boolean | undefined,
     date: '',
     startDate: '',
@@ -125,7 +124,6 @@ export class TimeSlotList implements OnInit{
 
   clearSearch(): void {
     this.searchCriteria = {
-      doctorId: undefined,
       available: undefined,
       date: '',
       startDate: '',

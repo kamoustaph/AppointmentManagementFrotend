@@ -36,7 +36,6 @@ export class TimeSlotService {
 
   searchByCriteria(
     criteria: {
-      doctorId?: number,
       available?: boolean,
       date?: string,
       startDate?: string,
@@ -51,7 +50,6 @@ export class TimeSlotService {
       .set('page', page.toString())
       .set('size', size.toString());
 
-    if (criteria.doctorId) params = params.set('doctorId', criteria.doctorId.toString());
     if (criteria.available !== undefined) params = params.set('available', criteria.available.toString());
     if (criteria.date) params = params.set('date', criteria.date);
     if (criteria.startDate) params = params.set('startDate', criteria.startDate);

@@ -5,7 +5,6 @@ export interface TimeSlot {
   slotDate: Date; 
   startTime: string;
   endTime: string;
-  doctorId: number;
 }
 
 export interface Page<T> {
