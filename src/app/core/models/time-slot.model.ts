@@ -1,3 +1,4 @@
+// Format "HH:mm" (ex: "09:00")
 export interface TimeSlot {
   id?: number;
   available: boolean;
