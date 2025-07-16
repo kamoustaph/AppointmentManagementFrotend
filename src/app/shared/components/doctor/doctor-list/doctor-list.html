@@ -1,0 +1,117 @@
+<mat-card class="doctor-card">
+    <app-breadcrumb></app-breadcrumb>
+  <mat-card-header class="card-header">
+    <mat-card-title class="card-title">Gestion des Médecins</mat-card-title>
+    <button mat-raised-button color="primary" (click)="openCreateDialog()" class="new-doctor-btn">
+      <mat-icon>add</mat-icon> Nouveau Médecin
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="search-container">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Numéro de licence</mat-label>
+        <input matInput [(ngModel)]="searchCriteria.licenseNumber" (keyup.enter)="onSearch()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Nom</mat-label>
+        <input matInput [(ngModel)]="searchCriteria.lastName" (keyup.enter)="onSearch()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Prénom</mat-label>
+        <input matInput [(ngModel)]="searchCriteria.firstName" (keyup.enter)="onSearch()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Email</mat-label>
+        <input matInput [(ngModel)]="searchCriteria.email" (keyup.enter)="onSearch()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Téléphone</mat-label>
+        <input matInput [(ngModel)]="searchCriteria.phoneNumber" (keyup.enter)="onSearch()">
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="onSearch()" [disabled]="isLoading">
+        <mat-icon>search</mat-icon> Rechercher
+      </button>
+      <button mat-button (click)="clearSearch()" *ngIf="isSearchActive()" [disabled]="isLoading">
+        <mat-icon>clear</mat-icon> Effacer
+      </button>
+    </div>
+
+    <div class="table-container mat-elevation-z8" *ngIf="!isLoading; else loading">
+      <table mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let doctor">{{ doctor.id }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="licenseNumber">
+          <th mat-header-cell *matHeaderCellDef>Licence</th>
+          <td mat-cell *matCellDef="let doctor">{{ doctor.licenseNumber }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="lastName">
+          <th mat-header-cell *matHeaderCellDef>Nom</th>
+          <td mat-cell *matCellDef="let doctor">{{ doctor.lastName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="firstName">
+          <th mat-header-cell *matHeaderCellDef>Prénom</th>
+          <td mat-cell *matCellDef="let doctor">{{ doctor.firstName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let doctor">{{ doctor.email }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="phoneNumber">
+          <th mat-header-cell *matHeaderCellDef>Téléphone</th>
+          <td mat-cell *matCellDef="let doctor">{{ doctor.phoneNumber }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="available">
+          <th mat-header-cell *matHeaderCellDef>Disponible</th>
+          <td mat-cell *matCellDef="let doctor">
+            <mat-icon [color]="doctor.available ? 'primary' : 'warn'">
+              {{ doctor.available ? 'check_circle' : 'cancel' }}
+            </mat-icon>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let doctor" class="actions-cell">
+            <button mat-icon-button color="primary" (click)="openEditDialog(doctor)" matTooltip="Modifier">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteDoctor(doctor.id)" matTooltip="Supprimer">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <mat-paginator [length]="totalElements"
+                    [pageSize]="pageSize"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                    (page)="onPageChange($event)"
+                    showFirstLastButtons>
+      </mat-paginator>
+    </div>
+
+    <ng-template #loading>
+      <div class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Chargement en cours...</p>
+      </div>
+    </ng-template>
+  </mat-card-content>
+</mat-card>

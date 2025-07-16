@@ -1,0 +1,73 @@
+<h2 mat-dialog-title>
+  {{ isEditMode ? 'Modifier un médecin' : 'Créer un nouveau médecin' }}
+</h2>
+
+<mat-dialog-content>
+  <app-breadcrumb></app-breadcrumb>
+
+  <form [formGroup]="doctorForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Numéro de licence</mat-label>
+      <input matInput formControlName="licenseNumber" required>
+      <mat-error *ngIf="doctorForm.get('licenseNumber')?.invalid">
+        {{ getErrorMessage('licenseNumber') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nom</mat-label>
+      <input matInput formControlName="lastName" required>
+      <mat-error *ngIf="doctorForm.get('lastName')?.invalid">
+        {{ getErrorMessage('lastName') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Prénom</mat-label>
+      <input matInput formControlName="firstName" required>
+      <mat-error *ngIf="doctorForm.get('firstName')?.invalid">
+        {{ getErrorMessage('firstName') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" required>
+      <mat-error *ngIf="doctorForm.get('email')?.invalid">
+        {{ getErrorMessage('email') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Téléphone</mat-label>
+      <input matInput formControlName="phoneNumber" required>
+      <mat-error *ngIf="doctorForm.get('phoneNumber')?.invalid">
+        {{ getErrorMessage('phoneNumber') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Date de naissance</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="birthDate">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="available">Disponible</mat-checkbox>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Annuler</button>
+  <button 
+    mat-raised-button 
+    color="primary" 
+    (click)="onSubmit()"
+    [disabled]="doctorForm.invalid || isLoading"
+  >
+    {{ isEditMode ? 'Modifier' : 'Créer' }}
+    <mat-icon *ngIf="isLoading">
+      <mat-spinner diameter="20"></mat-spinner>
+    </mat-icon>
+  </button>
+</mat-dialog-actions>
