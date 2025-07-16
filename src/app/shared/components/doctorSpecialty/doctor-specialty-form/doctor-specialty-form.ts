@@ -99,44 +99,41 @@ export class DoctorSpecialtyForm implements OnInit{
     ];
     this.breadcrumbService.setBreadcrumbs(breadcrumbs);
   }
-
-  onSubmit(): void {
-    if (this.doctorSpecialtyForm.invalid) {
-      return;
-    }
-
-    this.isLoading = true;
-    const doctorSpecialtyData = this.doctorSpecialtyForm.value;
-
-    const operation = this.isEditMode
-      ? this.doctorSpecialtyService.updateDoctorSpecialty(doctorSpecialtyData.id, doctorSpecialtyData)
-      : this.doctorSpecialtyService.createDoctorSpecialty(doctorSpecialtyData);
-
-    operation.subscribe({
-      next: () => {
-        this.snackBar.open(
-          `Association ${this.isEditMode ? 'modifiée' : 'créée'} avec succès`,
-          'Fermer',
-          { duration: 3000 }
-        );
-        this.dialogRef.close(true);
-      },
-      error: (error) => {
-        console.error('Error:', error);
-        this.snackBar.open(
-          `Erreur lors de ${
-            this.isEditMode ? 'la modification' : 'la création'
-          } de l'association`,
-          'Fermer',
-          { duration: 3000 }
-        );
-        this.isLoading = false;
-      },
-      complete: () => {
-        this.isLoading = false;
-      },
-    });
+onSubmit(): void {
+  if (this.doctorSpecialtyForm.invalid) {
+    return;
   }
+
+  this.isLoading = true;
+  const formValue = this.doctorSpecialtyForm.value;
+  const doctorSpecialtyData = {
+    doctorId: formValue.doctor.id,
+    specialtyId: formValue.specialty.id
+  };
+
+  const operation = this.isEditMode
+    ? this.doctorSpecialtyService.updateDoctorSpecialty(this.data.doctorSpecialty?.id || 0, doctorSpecialtyData)
+    : this.doctorSpecialtyService.createDoctorSpecialty(doctorSpecialtyData);
+
+  operation.subscribe({
+    next: () => {
+      this.snackBar.open(
+        `Association ${this.isEditMode ? 'modifiée' : 'créée'} avec succès`,
+        'Fermer',
+        { duration: 3000 }
+      );
+      this.dialogRef.close(true);
+    },
+    error: () => {
+      this.snackBar.open(
+        `Erreur lors de ${this.isEditMode ? 'la modification' : 'la création'} de l'association`,
+        'Fermer',
+        { duration: 3000 }
+      );
+      this.isLoading = false;
+    }
+  });
+}
 
   onCancel(): void {
     this.dialogRef.close(false);

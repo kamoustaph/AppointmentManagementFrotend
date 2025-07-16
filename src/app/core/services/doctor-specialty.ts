@@ -37,7 +37,7 @@ export class DoctorSpecialtyService {
           doctorName: item.doctor ? `${item.doctor.firstName} ${item.doctor.lastName}` : 'N/A',
           specialtyName: item.specialty ? item.specialty.name : 'N/A'
         }))
-      }));
+      })));
   }
 
   getDoctorSpecialtiesByDoctorId(doctorId: number, page: number = 0, size: number = 5): Observable<Page<DoctorSpecialty>> {
@@ -78,18 +78,12 @@ export class DoctorSpecialtyService {
     return this.http.get<DoctorSpecialty>(`${this.baseUrl}/doctor-specialties/${id}`);
   }
 
-  createDoctorSpecialty(doctorId: number, specialtyId: number): Observable<DoctorSpecialty> {
-    return this.http.post<DoctorSpecialty>(`${this.baseUrl}/doctor-specialties`, {
-      doctorId,
-      specialtyId
-    });
+  createDoctorSpecialty(doctorSpecialty: { doctorId: number, specialtyId: number }): Observable<DoctorSpecialty> {
+    return this.http.post<DoctorSpecialty>(`${this.baseUrl}/doctor-specialties`, doctorSpecialty);
   }
 
-  updateDoctorSpecialty(id: number, doctorId: number, specialtyId: number): Observable<DoctorSpecialty> {
-    return this.http.put<DoctorSpecialty>(`${this.baseUrl}/doctor-specialties/${id}`, {
-      doctorId,
-      specialtyId
-    });
+  updateDoctorSpecialty(id: number, doctorSpecialty: { doctorId: number, specialtyId: number }): Observable<DoctorSpecialty> {
+    return this.http.put<DoctorSpecialty>(`${this.baseUrl}/doctor-specialties/${id}`, doctorSpecialty);
   }
 
   deleteDoctorSpecialty(id: number): Observable<void> {
