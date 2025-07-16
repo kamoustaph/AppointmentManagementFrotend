@@ -8,6 +8,7 @@ import { PatientService } from '../../../core/services/patient';
 import { finalize } from 'rxjs/operators';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
+import { DoctorService } from '../../../core/services/doctor';
 
 @Component({
   selector: 'app-dashboard',
@@ -95,7 +96,8 @@ export class Dashboard implements OnInit {
 
   constructor(
     private breadcrumbService: Breadcrumb,
-    private patientService: PatientService
+    private patientService: PatientService,
+    private doctorService: DoctorService
   ) {}
 
   ngOnInit() {
@@ -104,6 +106,28 @@ export class Dashboard implements OnInit {
     ]);
     
     this.loadPatientsCount();
+        this.loadDoctorsCount(); 
+
+  }
+
+  loadDoctorsCount() {
+    const doctorsCard = this.cards.find(c => c.title === 'Doctors');
+    if (doctorsCard) {
+      doctorsCard.loading = true;
+      this.doctorService.getTotalDoctors().pipe(
+        finalize(() => {
+          doctorsCard.loading = false;
+          this.isLoading = false;
+        })
+      ).subscribe({
+        next: (count) => {
+          doctorsCard.count = count;
+        },
+        error: () => {
+          doctorsCard.count = 0;
+        }
+      });
+    }
   }
 
   loadPatientsCount() {
@@ -129,6 +153,8 @@ export class Dashboard implements OnInit {
   refreshData() {
     this.isLoading = true;
     this.loadPatientsCount();
+    this.loadDoctorsCount(); 
+
   }
 
   setHoverState(index: number, state: string) {
