@@ -9,6 +9,7 @@ import { finalize } from 'rxjs/operators';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 import { DoctorService } from '../../../core/services/doctor';
+import { SpecialtyService } from '../../../core/services/specialty';
 
 @Component({
   selector: 'app-dashboard',
@@ -66,27 +67,28 @@ export class Dashboard implements OnInit {
       title: 'Appointments', 
       count: 0, 
       icon: 'calendar_today',
-      color: '#3f51b/5',
+      color: '#3f51b5',
       loading: false
     },
     { 
       title: 'Doctors', 
       count: 0, 
       icon: 'medical_services',
-      color: '#673ab/7',
+      color: '#673ab7',
       loading: false
     },
     { 
       title: 'Patients', 
       count: 0, 
       icon: 'people',
-      color: '#2196f/3',
+      color: '#2196f3',
       loading: true
     },
     { 
       title: 'Specialties', 
       count: 0, 
       icon: 'healing',
+      color: '#4caf50', 
       loading: false
     }
   ];
@@ -97,7 +99,8 @@ export class Dashboard implements OnInit {
   constructor(
     private breadcrumbService: Breadcrumb,
     private patientService: PatientService,
-    private doctorService: DoctorService
+    private doctorService: DoctorService,
+    private specialtyService: SpecialtyService 
   ) {}
 
   ngOnInit() {
@@ -106,8 +109,8 @@ export class Dashboard implements OnInit {
     ]);
     
     this.loadPatientsCount();
-        this.loadDoctorsCount(); 
-
+    this.loadDoctorsCount();
+    this.loadSpecialtiesCount(); 
   }
 
   loadDoctorsCount() {
@@ -117,7 +120,7 @@ export class Dashboard implements OnInit {
       this.doctorService.getTotalDoctors().pipe(
         finalize(() => {
           doctorsCard.loading = false;
-          this.isLoading = false;
+          this.checkAllLoaded();
         })
       ).subscribe({
         next: (count) => {
@@ -137,7 +140,7 @@ export class Dashboard implements OnInit {
       this.patientService.getTotalPatients().pipe(
         finalize(() => {
           patientsCard.loading = false;
-          this.isLoading = false;
+          this.checkAllLoaded();
         })
       ).subscribe({
         next: (count) => {
@@ -150,11 +153,35 @@ export class Dashboard implements OnInit {
     }
   }
 
+  loadSpecialtiesCount() {
+    const specialtiesCard = this.cards.find(c => c.title === 'Specialties');
+    if (specialtiesCard) {
+      specialtiesCard.loading = true;
+      this.specialtyService.getTotalSpecialties().pipe(
+        finalize(() => {
+          specialtiesCard.loading = false;
+          this.checkAllLoaded();
+        })
+      ).subscribe({
+        next: (count) => {
+          specialtiesCard.count = count;
+        },
+        error: () => {
+          specialtiesCard.count = 0;
+        }
+      });
+    }
+  }
+
+  checkAllLoaded() {
+    this.isLoading = this.cards.some(card => card.loading);
+  }
+
   refreshData() {
     this.isLoading = true;
     this.loadPatientsCount();
-    this.loadDoctorsCount(); 
-
+    this.loadDoctorsCount();
+    this.loadSpecialtiesCount(); 
   }
 
   setHoverState(index: number, state: string) {
