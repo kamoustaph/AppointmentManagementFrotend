@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Page, TimeSlot } from '../models/time-slot.model';
 
 @Injectable({
@@ -10,12 +11,36 @@ export class TimeSlotService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8092/api/time-slots';
 
+  private formatTime(time: string): string {
+    if (!time) return '';
+    // Convertit "12:00" en "12h00min"
+    if (time.includes(':')) {
+      const [hours, minutes] = time.split(':');
+      return `${hours}h${minutes}min`;
+    }
+    // Si déjà au bon format, ne rien faire
+    return time;
+  }
+
+  private formatTimeSlot(timeSlot: TimeSlot): TimeSlot {
+    return {
+      ...timeSlot,
+      startTime: this.formatTime(timeSlot.startTime),
+      endTime: this.formatTime(timeSlot.endTime)
+    };
+  }
+
   getAllTimeSlots(page: number = 0, size: number = 5): Observable<Page<TimeSlot>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
     
-    return this.http.get<Page<TimeSlot>>(this.apiUrl, { params });
+    return this.http.get<Page<TimeSlot>>(this.apiUrl, { params }).pipe(
+      map(page => ({
+        ...page,
+        content: page.content.map(slot => this.formatTimeSlot(slot))
+      }))
+    );
   }
 
   getAvailableTimeSlots(page: number = 0, size: number = 5): Observable<Page<TimeSlot>> {
@@ -23,7 +48,12 @@ export class TimeSlotService {
       .set('page', page.toString())
       .set('size', size.toString());
     
-    return this.http.get<Page<TimeSlot>>(`${this.apiUrl}/available`, { params });
+    return this.http.get<Page<TimeSlot>>(`${this.apiUrl}/available`, { params }).pipe(
+      map(page => ({
+        ...page,
+        content: page.content.map(slot => this.formatTimeSlot(slot))
+      }))
+    );
   }
 
   getTimeSlotsByDoctor(doctorId: number, page: number = 0, size: number = 5): Observable<Page<TimeSlot>> {
@@ -31,7 +61,12 @@ export class TimeSlotService {
       .set('page', page.toString())
       .set('size', size.toString());
     
-    return this.http.get<Page<TimeSlot>>(`${this.apiUrl}/doctor/${doctorId}`, { params });
+    return this.http.get<Page<TimeSlot>>(`${this.apiUrl}/doctor/${doctorId}`, { params }).pipe(
+      map(page => ({
+        ...page,
+        content: page.content.map(slot => this.formatTimeSlot(slot))
+      }))
+    );
   }
 
   searchByCriteria(
@@ -57,11 +92,18 @@ export class TimeSlotService {
     if (criteria.startTime) params = params.set('startTime', criteria.startTime);
     if (criteria.endTime) params = params.set('endTime', criteria.endTime);
 
-    return this.http.get<Page<TimeSlot>>(`${this.apiUrl}/search`, { params });
+    return this.http.get<Page<TimeSlot>>(`${this.apiUrl}/search`, { params }).pipe(
+      map(page => ({
+        ...page,
+        content: page.content.map(slot => this.formatTimeSlot(slot))
+      }))
+    );
   }
 
   getTimeSlotById(id: number): Observable<TimeSlot> {
-    return this.http.get<TimeSlot>(`${this.apiUrl}/${id}`);
+    return this.http.get<TimeSlot>(`${this.apiUrl}/${id}`).pipe(
+      map(slot => this.formatTimeSlot(slot))
+    );
   }
 
   createTimeSlot(timeSlot: TimeSlot): Observable<TimeSlot> {

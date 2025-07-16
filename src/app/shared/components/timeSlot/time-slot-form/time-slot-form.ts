@@ -67,7 +67,6 @@ export class TimeSlotForm implements OnInit{
       startTime: ['', [Validators.required]],
       endTime: ['', [Validators.required]],
       available: [true],
-      doctorId: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]]
     });
 
     this.isEditMode = this.data.mode === 'edit';

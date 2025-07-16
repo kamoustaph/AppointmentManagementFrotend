@@ -33,14 +33,6 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>ID Médecin</mat-label>
-      <input matInput formControlName="doctorId" type="number" required>
-      <mat-error *ngIf="timeSlotForm.get('doctorId')?.invalid">
-        {{ getErrorMessage('doctorId') }}
-      </mat-error>
-    </mat-form-field>
-
     <mat-slide-toggle formControlName="available" color="primary">
       Disponible
     </mat-slide-toggle>

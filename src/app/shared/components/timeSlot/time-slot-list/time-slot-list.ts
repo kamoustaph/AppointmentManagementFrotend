@@ -22,6 +22,7 @@ import { Breadcrumb } from '../../../../core/services/breadcrumb';
 import { TimeSlotForm } from '../time-slot-form/time-slot-form';
 import { BreadcrumbComponent } from "../../breadcrumb/breadcrumb";
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { TimeFormatPipe } from "../../../pipes/time-format-pipe";
 
 
 
@@ -44,8 +45,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatDatepickerModule,
     MatNativeDateModule,
     BreadcrumbComponent,
-    MatSlideToggleModule
-
+    MatSlideToggleModule,
+    TimeFormatPipe
 ],
   templateUrl: './time-slot-list.html',
   styleUrl: './time-slot-list.css'
