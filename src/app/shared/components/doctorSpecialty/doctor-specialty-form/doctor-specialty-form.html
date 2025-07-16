@@ -1,0 +1,48 @@
+<h2 mat-dialog-title>
+  {{ isEditMode ? 'Modifier une association' : 'Créer une nouvelle association' }}
+</h2>
+
+<mat-dialog-content>
+  <app-breadcrumb></app-breadcrumb>
+
+  <form [formGroup]="doctorSpecialtyForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Médecin</mat-label>
+      <mat-select formControlName="doctor" required>
+        <mat-option *ngFor="let doctor of doctors" [value]="doctor">
+          {{ doctor.firstName }} {{ doctor.lastName }} ({{ doctor.licenseNumber }})
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="doctorSpecialtyForm.get('doctor')?.invalid">
+        Sélectionnez un médecin
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Spécialité</mat-label>
+      <mat-select formControlName="specialty" required>
+        <mat-option *ngFor="let specialty of specialties" [value]="specialty">
+          {{ specialty.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="doctorSpecialtyForm.get('specialty')?.invalid">
+        Sélectionnez une spécialité
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Annuler</button>
+  <button 
+    mat-raised-button 
+    color="primary" 
+    (click)="onSubmit()"
+    [disabled]="doctorSpecialtyForm.invalid || isLoading"
+  >
+    {{ isEditMode ? 'Modifier' : 'Créer' }}
+    <mat-icon *ngIf="isLoading">
+      <mat-spinner diameter="20"></mat-spinner>
+    </mat-icon>
+  </button>
+</mat-dialog-actions>

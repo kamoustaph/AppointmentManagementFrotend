@@ -25,7 +25,9 @@ export class Layout {
     { name: 'Appointment', icon: 'calendar_today', route: '/appointment' },
     { name: 'Specialiste', icon: 'healing', route: '/specialty' },
     { name: 'Notification', icon: 'notifications', route: '/notification' },
-    { name: 'TimeSlot', icon: 'notifications', route: '/timeSlot' }
+    { name: 'TimeSlot', icon: 'notifications', route: '/timeSlot' },
+    { name: 'DoctorSpecialite', icon: 'healing', route: '/doctorSpecialty' }
+
 
   ];
 
