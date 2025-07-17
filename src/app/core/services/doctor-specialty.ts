@@ -82,13 +82,14 @@ export class DoctorSpecialtyService {
     return this.http.get<DoctorSpecialty>(`${this.baseUrl}/doctor-specialties/${id}`);
   }
 
-  createDoctorSpecialty(doctorSpecialty: { doctorId: number, specialtyId: number }): Observable<DoctorSpecialty> {
-    return this.http.post<DoctorSpecialty>(`${this.baseUrl}/doctor-specialties`, doctorSpecialty);
-  }
+  createDoctorSpecialty(doctorSpecialty: DoctorSpecialty): Observable<DoctorSpecialty> {
+  return this.http.post<DoctorSpecialty>(`${this.baseUrl}/doctor-specialties`, doctorSpecialty);
+}
 
-  updateDoctorSpecialty(id: number, doctorSpecialty: { doctorId: number, specialtyId: number }): Observable<DoctorSpecialty> {
-    return this.http.put<DoctorSpecialty>(`${this.baseUrl}/doctor-specialties/${id}`, doctorSpecialty);
-  }
+  updateDoctorSpecialty(id: number, doctorSpecialty: DoctorSpecialty): Observable<DoctorSpecialty> {
+  return this.http.put<DoctorSpecialty>(`${this.baseUrl}/doctor-specialties/${id}`, doctorSpecialty);
+}
+
 
   deleteDoctorSpecialty(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/doctor-specialties/${id}`);

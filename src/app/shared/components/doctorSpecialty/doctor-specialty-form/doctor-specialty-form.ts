@@ -14,6 +14,7 @@ import { DoctorSpecialtyService } from '../../../../core/services/doctor-special
 import { Doctor } from '../../../../core/models/doctor.model';
 import { Specialty } from '../../../../core/models/specialty.model';
 import { forkJoin, map } from 'rxjs';
+import { DoctorSpecialty } from '../../../../core/models/doctor-specialty.model';
 
 @Component({
   selector: 'app-doctor-specialty-form',
@@ -111,10 +112,11 @@ export class DoctorSpecialtyForm implements OnInit {
     this.isLoading = true;
     const { doctor, specialty } = this.doctorSpecialtyForm.value;
 
-    const request = {
-      doctorId: doctor.id,
-      specialtyId: specialty.id
-    };
+    const request: DoctorSpecialty = {
+  doctor: doctor,
+  specialty: specialty
+};
+
 
     const operation = this.isEditMode
       ? this.doctorSpecialtyService.updateDoctorSpecialty(this.data.doctorSpecialty.id, request)
