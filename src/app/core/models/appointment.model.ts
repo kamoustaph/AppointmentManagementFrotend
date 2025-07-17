@@ -1,4 +1,3 @@
-// appointment.model.ts
 export enum AppointmentStatus {
   PENDING = 'PENDING',
   CONFIRMED = 'CONFIRMED',
@@ -9,20 +8,20 @@ export enum AppointmentStatus {
 
 export interface Appointment {
   id?: number;
-  date: Date | string; 
+  date: Date | string;
   status: AppointmentStatus;
-  patientId: number;
-  specialtyId: number;
-  timeSlotId: number;
+  patientId?: number;
   patient?: {
     id: number;
     lastName: string;
     firstName: string;
   };
+  specialtyId?: number;
   specialty?: {
     id: number;
     name: string;
   };
+  timeSlotId?: number;
   timeSlot?: {
     id: number;
     startTime: string;

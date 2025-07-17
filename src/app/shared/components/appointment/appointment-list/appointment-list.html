@@ -54,32 +54,49 @@
       <table mat-table [dataSource]="dataSource">
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef>ID</th>
-          <td mat-cell *matCellDef="let appointment">{{ appointment.id }}</td>
+          <td mat-cell *matCellDef="let appointment">{{ appointment.id || 'N/A' }}</td>
         </ng-container>
 
         <ng-container matColumnDef="date">
           <th mat-header-cell *matHeaderCellDef>Date</th>
-          <td mat-cell *matCellDef="let appointment">{{ appointment.date | date:'mediumDate' }}</td>
+          <td mat-cell *matCellDef="let appointment">
+            {{ (appointment.date | date:'mediumDate') || 'Date non spécifiée' }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="patient">
           <th mat-header-cell *matHeaderCellDef>Patient</th>
           <td mat-cell *matCellDef="let appointment">
-            {{ appointment.patient?.firstName }} {{ appointment.patient?.lastName }}
+            <ng-container *ngIf="appointment.patient; else noPatient">
+              {{ appointment.patient.firstName }} {{ appointment.patient.lastName }}
+            </ng-container>
+            <ng-template #noPatient>
+              <span class="missing-data">Patient non spécifié</span>
+            </ng-template>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="specialty">
           <th mat-header-cell *matHeaderCellDef>Spécialité</th>
           <td mat-cell *matCellDef="let appointment">
-            {{ appointment.specialty?.name }}
+            <ng-container *ngIf="appointment.specialty; else noSpecialty">
+              {{ appointment.specialty.name }}
+            </ng-container>
+            <ng-template #noSpecialty>
+              <span class="missing-data">Spécialité non spécifiée</span>
+            </ng-template>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="timeSlot">
-          <th mat-header-cell *matHeaderCellDef>Creneau</th>
+          <th mat-header-cell *matHeaderCellDef>Créneau</th>
           <td mat-cell *matCellDef="let appointment">
-            {{ appointment.timeSlot?.startTime }} - {{ appointment.timeSlot?.endTime }}
+            <ng-container *ngIf="appointment.timeSlot; else noTimeSlot">
+              {{ appointment.timeSlot.startTime }} - {{ appointment.timeSlot.endTime }}
+            </ng-container>
+            <ng-template #noTimeSlot>
+              <span class="missing-data">Créneau non spécifié</span>
+            </ng-template>
           </td>
         </ng-container>
 
@@ -87,7 +104,7 @@
           <th mat-header-cell *matHeaderCellDef>Statut</th>
           <td mat-cell *matCellDef="let appointment">
             <mat-chip [color]="getStatusColor(appointment.status)" selected>
-              {{ appointment.status }}
+              {{ appointment.status || 'N/A' }}
             </mat-chip>
           </td>
         </ng-container>
