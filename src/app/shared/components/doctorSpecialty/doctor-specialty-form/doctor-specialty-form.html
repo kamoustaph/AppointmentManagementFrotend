@@ -1,31 +1,32 @@
 <h2 mat-dialog-title>
-  {{ isEditMode ? 'Modifier une association' : 'Créer une nouvelle association' }}
+  {{ isEditMode ? 'Modifier association' : 'Nouvelle association' }}
 </h2>
 
 <mat-dialog-content>
-  <app-breadcrumb></app-breadcrumb>
-
-  <form [formGroup]="doctorSpecialtyForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="doctorSpecialtyForm">
+    <!-- Médecin -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Médecin</mat-label>
-      <mat-select formControlName="doctor" required>
+      <mat-select formControlName="doctor" required [compareWith]="compareDoctors">
         <mat-option *ngFor="let doctor of doctors" [value]="doctor">
-          {{ doctor.firstName }} {{ doctor.lastName }} ({{ doctor.licenseNumber }})
+          {{ doctor.firstName }} {{ doctor.lastName }}
+          <span *ngIf="doctor.licenseNumber">({{ doctor.licenseNumber }})</span>
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="doctorSpecialtyForm.get('doctor')?.invalid">
+      <mat-error *ngIf="doctorSpecialtyForm.get('doctor')?.hasError('required')">
         Sélectionnez un médecin
       </mat-error>
     </mat-form-field>
 
+    <!-- Spécialité -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Spécialité</mat-label>
-      <mat-select formControlName="specialty" required>
+      <mat-select formControlName="specialty" required [compareWith]="compareSpecialties">
         <mat-option *ngFor="let specialty of specialties" [value]="specialty">
           {{ specialty.name }}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="doctorSpecialtyForm.get('specialty')?.invalid">
+      <mat-error *ngIf="doctorSpecialtyForm.get('specialty')?.hasError('required')">
         Sélectionnez une spécialité
       </mat-error>
     </mat-form-field>
@@ -34,12 +35,9 @@
 
 <mat-dialog-actions align="end">
   <button mat-button (click)="onCancel()">Annuler</button>
-  <button 
-    mat-raised-button 
-    color="primary" 
-    (click)="onSubmit()"
-    [disabled]="doctorSpecialtyForm.invalid || isLoading"
-  >
+  <button mat-raised-button color="primary" 
+          (click)="onSubmit()"
+          [disabled]="doctorSpecialtyForm.invalid || isLoading">
     {{ isEditMode ? 'Modifier' : 'Créer' }}
     <mat-icon *ngIf="isLoading">
       <mat-spinner diameter="20"></mat-spinner>

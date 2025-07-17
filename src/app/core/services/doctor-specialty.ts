@@ -15,12 +15,16 @@ export class DoctorSpecialtyService {
 
   // Méthodes pour les médecins
   getAllDoctors(): Observable<Doctor[]> {
-    return this.http.get<Doctor[]>(`${this.baseUrl}/doctors`);
+    return this.http.get<{content: Doctor[]}>(`${this.baseUrl}/doctors`).pipe(
+      map(response => response.content || [])
+    );
   }
 
   // Méthodes pour les spécialités
   getAllSpecialties(): Observable<Specialty[]> {
-    return this.http.get<Specialty[]>(`${this.baseUrl}/specialties`);
+    return this.http.get<{content: Specialty[]}>(`${this.baseUrl}/specialties`).pipe(
+      map(response => response.content || [])
+    );
   }
 
   // Méthodes pour les associations médecin-spécialité
