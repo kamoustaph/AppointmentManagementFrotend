@@ -1,0 +1,89 @@
+<!-- appointment-form.component.html -->
+<h2 mat-dialog-title>
+  {{ isEditMode ? 'Modifier un rendez-vous' : 'Créer un nouveau rendez-vous' }}
+</h2>
+
+<mat-dialog-content>
+  <app-breadcrumb></app-breadcrumb>
+
+  <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Patient</mat-label>
+      <mat-select formControlName="patientId" required>
+        <mat-option *ngFor="let patient of patients" [value]="patient.id">
+          {{ patient.firstName }} {{ patient.lastName }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="appointmentForm.get('patientId')?.invalid">
+        {{ getErrorMessage('patientId') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Spécialité</mat-label>
+      <mat-select formControlName="specialtyId" required>
+        <mat-option *ngFor="let specialty of specialties" [value]="specialty.id">
+          {{ specialty.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="appointmentForm.get('specialtyId')?.invalid">
+        {{ getErrorMessage('specialtyId') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Date</mat-label>
+      <input matInput [matDatepicker]="datePicker" formControlName="date" required>
+      <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+      <mat-datepicker #datePicker></mat-datepicker>
+      <mat-error *ngIf="appointmentForm.get('date')?.invalid">
+        {{ getErrorMessage('date') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Créneau horaire</mat-label>
+      <mat-select formControlName="timeSlotId" required>
+        <mat-option *ngIf="isTimeSlotsLoading" disabled>
+          <mat-spinner diameter="20"></mat-spinner> Chargement des créneaux...
+        </mat-option>
+        <mat-option *ngFor="let timeSlot of timeSlots" [value]="timeSlot.id">
+          {{ timeSlot.startTime }} - {{ timeSlot.endTime }}
+        </mat-option>
+        <mat-option *ngIf="!isTimeSlotsLoading && timeSlots.length === 0" disabled>
+          Aucun créneau disponible
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="appointmentForm.get('timeSlotId')?.invalid">
+        {{ getErrorMessage('timeSlotId') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Statut</mat-label>
+      <mat-select formControlName="status" required>
+        <mat-option *ngFor="let status of statusOptions" [value]="status">
+          {{ status }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="appointmentForm.get('status')?.invalid">
+        {{ getErrorMessage('status') }}
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Annuler</button>
+  <button 
+    mat-raised-button 
+    color="primary" 
+    (click)="onSubmit()"
+    [disabled]="appointmentForm.invalid || isLoading"
+  >
+    {{ isEditMode ? 'Modifier' : 'Créer' }}
+    <mat-icon *ngIf="isLoading">
+      <mat-spinner diameter="20"></mat-spinner>
+    </mat-icon>
+  </button>
+</mat-dialog-actions>

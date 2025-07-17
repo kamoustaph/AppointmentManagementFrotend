@@ -1,0 +1,141 @@
+<mat-card class="appointment-card">
+    <app-breadcrumb></app-breadcrumb>
+  <mat-card-header class="card-header">
+    <mat-card-title class="card-title">Gestion des Rendez-vous</mat-card-title>
+    <button mat-raised-button color="primary" (click)="openCreateDialog()" class="new-appointment-btn">
+      <mat-icon>add</mat-icon> Nouveau Rendez-vous
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="search-container">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>ID Patient</mat-label>
+        <input matInput type="number" [(ngModel)]="searchCriteria.patientId" (keyup.enter)="onSearch()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>ID Spécialité</mat-label>
+        <input matInput type="number" [(ngModel)]="searchCriteria.specialtyId" (keyup.enter)="onSearch()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Statut</mat-label>
+        <mat-select [(ngModel)]="searchCriteria.status">
+          <mat-option *ngFor="let status of statusOptions" [value]="status">
+            {{ status }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Date de début</mat-label>
+        <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="searchCriteria.startDate">
+        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #startDatePicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Date de fin</mat-label>
+        <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="searchCriteria.endDate">
+        <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #endDatePicker></mat-datepicker>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" (click)="onSearch()" [disabled]="isLoading">
+        <mat-icon>search</mat-icon> Rechercher
+      </button>
+      <button mat-button (click)="clearSearch()" *ngIf="isSearchActive()" [disabled]="isLoading">
+        <mat-icon>clear</mat-icon> Effacer
+      </button>
+    </div>
+
+    <div class="table-container mat-elevation-z8" *ngIf="!isLoading; else loading">
+      <table mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let appointment">{{ appointment.id }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let appointment">{{ appointment.date | date:'mediumDate' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="patient">
+          <th mat-header-cell *matHeaderCellDef>Patient</th>
+          <td mat-cell *matCellDef="let appointment">
+            {{ appointment.patient?.firstName }} {{ appointment.patient?.lastName }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="specialty">
+          <th mat-header-cell *matHeaderCellDef>Spécialité</th>
+          <td mat-cell *matCellDef="let appointment">
+            {{ appointment.specialty?.name }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="timeSlot">
+          <th mat-header-cell *matHeaderCellDef>Creneau</th>
+          <td mat-cell *matCellDef="let appointment">
+            {{ appointment.timeSlot?.startTime }} - {{ appointment.timeSlot?.endTime }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Statut</th>
+          <td mat-cell *matCellDef="let appointment">
+            <mat-chip [color]="getStatusColor(appointment.status)" selected>
+              {{ appointment.status }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let appointment" class="actions-cell">
+            <button mat-icon-button color="primary" (click)="openEditDialog(appointment)" matTooltip="Modifier">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteAppointment(appointment.id)" matTooltip="Supprimer">
+              <mat-icon>delete</mat-icon>
+            </button>
+            
+            <button *ngIf="appointment.status === 'PENDING'" mat-icon-button color="primary" 
+                    (click)="confirmAppointment(appointment.id)" matTooltip="Confirmer">
+              <mat-icon>check_circle</mat-icon>
+            </button>
+            
+            <button *ngIf="appointment.status === 'CONFIRMED'" mat-icon-button color="accent" 
+                    (click)="completeAppointment(appointment.id)" matTooltip="Terminer">
+              <mat-icon>done_all</mat-icon>
+            </button>
+            
+            <button *ngIf="appointment.status !== 'CANCELLED' && appointment.status !== 'COMPLETED'" 
+                    mat-icon-button color="warn" (click)="cancelAppointment(appointment.id)" matTooltip="Annuler">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <mat-paginator [length]="totalElements"
+                    [pageSize]="pageSize"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                    (page)="onPageChange($event)"
+                    showFirstLastButtons>
+      </mat-paginator>
+    </div>
+
+    <ng-template #loading>
+      <div class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Chargement en cours...</p>
+      </div>
+    </ng-template>
+  </mat-card-content>
+</mat-card>

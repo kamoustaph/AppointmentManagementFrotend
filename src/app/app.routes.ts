@@ -11,6 +11,7 @@ import { DoctorList } from './shared/components/doctor/doctor-list/doctor-list';
 import { SpecialtyList } from './shared/components/specialty/specialty-list/specialty-list';
 import { TimeSlotList } from './shared/components/timeSlot/time-slot-list/time-slot-list';
 import { DoctorSpecialtyList } from './shared/components/doctorSpecialty/doctor-specialty-list/doctor-specialty-list';
+import { AppointmentList } from './shared/components/appointment/appointment-list/appointment-list';
 export const routes: Routes = [
   {
     path: 'login',
@@ -67,6 +68,12 @@ export const routes: Routes = [
       {
         path: 'doctorSpecialty',
         component: DoctorSpecialtyList,
+        canActivate: [roleguardGuard], 
+        data: { roles: [ERole.MEDECIN,ERole.PATIENT] },
+      },
+       {
+        path: 'appointment',
+        component: AppointmentList,
         canActivate: [roleguardGuard], 
         data: { roles: [ERole.MEDECIN,ERole.PATIENT] },
       },

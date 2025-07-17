@@ -1,4 +1,5 @@
 import { Specialty } from "./specialty.model";
+import { TimeSlot } from "./time-slot.model";
 
 export interface Doctor {
   id: number;
@@ -11,11 +12,6 @@ export interface Doctor {
   available: boolean;
   timeSlots?: TimeSlot[];
   specialties?: Specialty[];
-}
-
-export interface TimeSlot {
-  id: number;
-  // Ajoutez ici les autres propriétés de TimeSlot
 }
 
 
