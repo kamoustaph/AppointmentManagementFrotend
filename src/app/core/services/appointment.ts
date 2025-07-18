@@ -106,6 +106,10 @@ export class AppointmentService {
         return this.http.get<TimeSlot[]>(`${this.apiUrl}/time-slots/batch`, { params });
     }
 
+
+    getTotalAppointmentes(): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/stats/total`);
+}
     getAllPatients(
         page: number = 0,
         size: number = 100

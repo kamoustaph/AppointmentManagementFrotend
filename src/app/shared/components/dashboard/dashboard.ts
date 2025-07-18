@@ -10,6 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 import { DoctorService } from '../../../core/services/doctor';
 import { SpecialtyService } from '../../../core/services/specialty';
+import { AppointmentService } from '../../../core/services/appointment';
 
 @Component({
   selector: 'app-dashboard',
@@ -100,7 +101,9 @@ export class Dashboard implements OnInit {
     private breadcrumbService: Breadcrumb,
     private patientService: PatientService,
     private doctorService: DoctorService,
-    private specialtyService: SpecialtyService 
+    private specialtyService: SpecialtyService ,
+    private appointmentService: AppointmentService 
+
   ) {}
 
   ngOnInit() {
@@ -111,7 +114,28 @@ export class Dashboard implements OnInit {
     this.loadPatientsCount();
     this.loadDoctorsCount();
     this.loadSpecialtiesCount(); 
+     this.loadAppointmentsCount();
   }
+
+loadAppointmentsCount() {
+    const appointmentsCard = this.cards.find(c => c.title === 'Appointments');
+    if (appointmentsCard) {
+        appointmentsCard.loading = true;
+        this.appointmentService.getTotalAppointments().pipe(
+            finalize(() => {
+                appointmentsCard.loading = false;
+                this.checkAllLoaded();
+            })
+        ).subscribe({
+            next: (count) => {
+                appointmentsCard.count = count;
+            },
+            error: () => {
+                appointmentsCard.count = 0;
+            }
+        });
+    }
+}
 
   loadDoctorsCount() {
     const doctorsCard = this.cards.find(c => c.title === 'Doctors');
