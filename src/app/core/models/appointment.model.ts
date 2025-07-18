@@ -6,6 +6,14 @@ export enum AppointmentStatus {
   MISSED = 'MISSED'
 }
 
+export interface AppointmentRequest {
+  date: string;
+  status: AppointmentStatus;
+  patientId: number;
+  specialtyId: number;
+  timeSlotId: number;
+}
+
 export interface Appointment {
   id?: number;
   date: Date | string;

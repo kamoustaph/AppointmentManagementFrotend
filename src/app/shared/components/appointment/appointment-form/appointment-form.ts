@@ -1,4 +1,3 @@
-// appointment-form.component.ts
 import { Component, Inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -91,11 +90,10 @@ export class AppointmentFormComponent implements OnInit {
     this.loadSpecialties();
 
     if (this.isEditMode && this.data.appointment) {
-      this.appointmentForm.patchValue(this.data.appointment);
+      this.patchFormValues(this.data.appointment);
       this.onSpecialtyOrDateChange();
     }
 
-    // Écouter les changements de date ou de spécialité
     this.appointmentForm.get('date')?.valueChanges.subscribe(() => {
       this.onSpecialtyOrDateChange();
     });
@@ -105,15 +103,22 @@ export class AppointmentFormComponent implements OnInit {
     });
   }
 
+  private patchFormValues(appointment: Appointment): void {
+    this.appointmentForm.patchValue({
+      id: appointment.id,
+      date: new Date(appointment.date),
+      status: appointment.status,
+      patientId: appointment.patient?.id || appointment.patientId,
+      specialtyId: appointment.specialty?.id || appointment.specialtyId,
+      timeSlotId: appointment.timeSlot?.id || appointment.timeSlotId
+    });
+  }
+
   private setupBreadcrumb(): void {
-    const breadcrumbs = [];
-
-    if (this.isEditMode) {
-      breadcrumbs.push({ label: 'Modifier Rendez-vous', url: '' });
-    } else {
-      breadcrumbs.push({ label: 'Nouveau Rendez-vous', url: '' });
-    }
-
+    const breadcrumbs = [
+      { label: 'Liste des Rendez-vous', url: '/appointments' },
+      { label: this.isEditMode ? 'Modifier' : 'Créer', url: '' }
+    ];
     this.breadcrumbService.setBreadcrumbs(breadcrumbs);
   }
 
@@ -150,6 +155,7 @@ export class AppointmentFormComponent implements OnInit {
       },
     });
   }
+
   private onSpecialtyOrDateChange(): void {
     const dateValue = this.appointmentForm.get('date')?.value;
     const specialtyId = this.appointmentForm.get('specialtyId')?.value;
@@ -158,7 +164,6 @@ export class AppointmentFormComponent implements OnInit {
       this.isTimeSlotsLoading = true;
       this.appointmentForm.get('timeSlotId')?.disable();
 
-      // Convertir la date au format Date si ce n'est pas déjà fait
       const date = dateValue instanceof Date ? dateValue : new Date(dateValue);
 
       this.appointmentService
@@ -187,6 +192,7 @@ export class AppointmentFormComponent implements OnInit {
       this.appointmentForm.get('timeSlotId')?.disable();
     }
   }
+
   displayPatient(patient: Patient): string {
     return patient ? `${patient.firstName} ${patient.lastName}` : '';
   }
@@ -198,48 +204,63 @@ export class AppointmentFormComponent implements OnInit {
   displayTimeSlot(timeSlot: TimeSlot): string {
     return timeSlot ? `${timeSlot.startTime} - ${timeSlot.endTime}` : '';
   }
+onSubmit(): void {
+  if (this.appointmentForm.invalid) {
+    return;
+  }
 
-  onSubmit(): void {
-    if (this.appointmentForm.invalid) {
+  this.isLoading = true;
+  const formValue = this.appointmentForm.value;
+
+  const appointmentData: Appointment = {
+    id: formValue.id,
+    date: formValue.date,
+    status: formValue.status,
+    patientId: formValue.patientId,
+    specialtyId: formValue.specialtyId,
+    timeSlotId: formValue.timeSlotId
+  };
+
+  if (this.isEditMode) {
+    // En mode édition, on est sûr d'avoir un ID
+    if (!appointmentData.id) {
+      this.snackBar.open('ID du rendez-vous manquant', 'Fermer', { duration: 3000 });
+      this.isLoading = false;
       return;
     }
-
-    this.isLoading = true;
-    const appointmentData = this.appointmentForm.value;
-
-    const operation = this.isEditMode
-      ? this.appointmentService.updateAppointment(
-          appointmentData.id,
-          appointmentData
-        )
-      : this.appointmentService.createAppointment(appointmentData);
-
-    operation.subscribe({
+    this.appointmentService.updateAppointment(appointmentData.id, appointmentData).subscribe({
       next: () => {
-        this.snackBar.open(
-          `Rendez-vous ${this.isEditMode ? 'modifié' : 'créé'} avec succès`,
-          'Fermer',
-          { duration: 3000 }
-        );
+        this.snackBar.open('Rendez-vous modifié avec succès', 'Fermer', { duration: 3000 });
         this.dialogRef.close(true);
       },
       error: (error) => {
         console.error('Error:', error);
         this.snackBar.open(
-          `Erreur lors de ${
-            this.isEditMode ? 'la modification' : 'la création'
-          } du rendez-vous`,
+          `Erreur lors de la modification du rendez-vous: ${error.message}`,
           'Fermer',
-          { duration: 3000 }
+          { duration: 5000 }
         );
         this.isLoading = false;
+      }
+    });
+  } else {
+    this.appointmentService.createAppointment(appointmentData).subscribe({
+      next: () => {
+        this.snackBar.open('Rendez-vous créé avec succès', 'Fermer', { duration: 3000 });
+        this.dialogRef.close(true);
       },
-      complete: () => {
+      error: (error) => {
+        console.error('Error:', error);
+        this.snackBar.open(
+          `Erreur lors de la création du rendez-vous: ${error.message}`,
+          'Fermer',
+          { duration: 5000 }
+        );
         this.isLoading = false;
-      },
+      }
     });
   }
-
+}
   onCancel(): void {
     this.dialogRef.close(false);
   }

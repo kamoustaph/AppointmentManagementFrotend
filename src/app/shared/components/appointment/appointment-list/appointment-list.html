@@ -67,35 +67,25 @@
         <ng-container matColumnDef="patient">
           <th mat-header-cell *matHeaderCellDef>Patient</th>
           <td mat-cell *matCellDef="let appointment">
-            <ng-container *ngIf="appointment.patient; else noPatient">
-              {{ appointment.patient.firstName }} {{ appointment.patient.lastName }}
-            </ng-container>
-            <ng-template #noPatient>
-              <span class="missing-data">Patient non spécifié</span>
-            </ng-template>
+            {{ appointment.patient?.firstName }} {{ appointment.patient?.lastName || 'Non spécifié' }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="specialty">
           <th mat-header-cell *matHeaderCellDef>Spécialité</th>
           <td mat-cell *matCellDef="let appointment">
-            <ng-container *ngIf="appointment.specialty; else noSpecialty">
-              {{ appointment.specialty.name }}
-            </ng-container>
-            <ng-template #noSpecialty>
-              <span class="missing-data">Spécialité non spécifiée</span>
-            </ng-template>
+            {{ appointment.specialty?.name || 'Non spécifiée' }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="timeSlot">
           <th mat-header-cell *matHeaderCellDef>Créneau</th>
           <td mat-cell *matCellDef="let appointment">
-            <ng-container *ngIf="appointment.timeSlot; else noTimeSlot">
+            <span *ngIf="appointment.timeSlot; else noTimeSlot">
               {{ appointment.timeSlot.startTime }} - {{ appointment.timeSlot.endTime }}
-            </ng-container>
+            </span>
             <ng-template #noTimeSlot>
-              <span class="missing-data">Créneau non spécifié</span>
+              <span class="missing-data">Non spécifié</span>
             </ng-template>
           </td>
         </ng-container>

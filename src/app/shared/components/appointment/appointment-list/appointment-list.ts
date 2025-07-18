@@ -1,4 +1,3 @@
-// appointment-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -21,10 +20,9 @@ import { Breadcrumb } from '../../../../core/services/breadcrumb';
 import { BreadcrumbComponent } from "../../breadcrumb/breadcrumb";
 import Swal from 'sweetalert2';
 import { MatChipsModule } from '@angular/material/chips';
-
-
 import { AppointmentService } from '../../../../core/services/appointment';
 import { AppointmentFormComponent } from '../appointment-form/appointment-form';
+
 @Component({
   selector: 'app-appointment-list',
   standalone: true,
@@ -45,13 +43,11 @@ import { AppointmentFormComponent } from '../appointment-form/appointment-form';
     MatNativeDateModule,
     BreadcrumbComponent,
     MatChipsModule,
-
-],
+  ],
   templateUrl: './appointment-list.html',
   styleUrl: './appointment-list.css'
 })
-export class AppointmentList implements OnInit{
-
+export class AppointmentList implements OnInit {
   displayedColumns: string[] = ['id', 'date', 'patient', 'specialty', 'timeSlot', 'status', 'actions'];
   dataSource: Appointment[] = [];
   totalElements = 0;
@@ -85,8 +81,7 @@ export class AppointmentList implements OnInit{
       { label: 'Liste des Rendez-vous', url: '/appointments' }
     ]);
   }
-
-  loadAppointments(): void {
+loadAppointments(): void {
     this.isLoading = true;
     this.appointmentService.getAllAppointments(this.currentPage, this.pageSize)
       .subscribe({
@@ -95,11 +90,13 @@ export class AppointmentList implements OnInit{
           this.totalElements = page.totalElements;
           this.isLoading = false;
         },
-        error: () => {
+        error: (err) => {
           this.isLoading = false;
-          this.snackBar.open('Erreur lors du chargement des rendez-vous', 'Fermer', {
-            duration: 3000
-          });
+          this.snackBar.open(
+            `Erreur lors du chargement: ${err.message}`,
+            'Fermer',
+            { duration: 5000 }
+          );
         }
       });
   }
@@ -110,15 +107,22 @@ export class AppointmentList implements OnInit{
     this.appointmentService.searchAppointments(this.searchCriteria, this.currentPage, this.pageSize)
       .subscribe({
         next: (page) => {
-          this.dataSource = page.content;
+          this.dataSource = page.content.map(app => ({
+            ...app,
+            patient: app.patient || { id: app.patientId || 0, firstName: 'Inconnu', lastName: '' },
+            specialty: app.specialty || { id: app.specialtyId || 0, name: 'Inconnue' },
+            timeSlot: app.timeSlot || { id: app.timeSlotId || 0, startTime: '', endTime: '' }
+          }));
           this.totalElements = page.totalElements;
           this.isLoading = false;
         },
-        error: () => {
+        error: (err) => {
           this.isLoading = false;
-          this.snackBar.open('Erreur lors de la recherche', 'Fermer', {
-            duration: 3000
-          });
+          this.snackBar.open(
+            `Erreur lors de la recherche: ${err.message}`,
+            'Fermer',
+            { duration: 5000 }
+          );
         }
       });
   }
@@ -162,20 +166,45 @@ export class AppointmentList implements OnInit{
       }
     });
   }
+ openEditDialog(appointment: Appointment): void {
+    if (!appointment.id) {
+        this.snackBar.open('ID du rendez-vous manquant', 'Fermer', { duration: 3000 });
+        return;
+    }
 
-  openEditDialog(appointment: Appointment): void {
-    const dialogRef = this.dialog.open(AppointmentFormComponent, {
-      width: '800px',
-      data: { mode: 'edit', appointment }
-    });
+    this.isLoading = true;
+    this.appointmentService.getAppointmentById(appointment.id).subscribe({
+      next: (fullAppointment: Appointment) => {
+        this.isLoading = false;
+        const dialogRef = this.dialog.open(AppointmentFormComponent, {
+          width: '800px',
+          data: { 
+            mode: 'edit', 
+            appointment: {
+              ...fullAppointment,
+              patientId: fullAppointment.patient?.id,
+              specialtyId: fullAppointment.specialty?.id,
+              timeSlotId: fullAppointment.timeSlot?.id
+            }
+          }
+        });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadAppointments();
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.loadAppointments();
+          }
+        });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.snackBar.open(
+          `Erreur lors du chargement des détails: ${err.message}`,
+          'Fermer',
+          { duration: 5000 }
+        );
       }
     });
   }
-
   deleteAppointment(id: number): void {
     Swal.fire({
       title: 'Êtes-vous sûr ?',
@@ -197,10 +226,10 @@ export class AppointmentList implements OnInit{
             );
             this.loadAppointments();
           },
-          error: () => {
+          error: (err) => {
             Swal.fire(
               'Erreur !',
-              'Une erreur est survenue lors de la suppression.',
+              `Une erreur est survenue: ${err.message}`,
               'error'
             );
           }
@@ -215,8 +244,8 @@ export class AppointmentList implements OnInit{
         this.snackBar.open('Rendez-vous confirmé avec succès', 'Fermer', { duration: 3000 });
         this.loadAppointments();
       },
-      error: () => {
-        this.snackBar.open('Erreur lors de la confirmation', 'Fermer', { duration: 3000 });
+      error: (err) => {
+        this.snackBar.open(`Erreur: ${err.message}`, 'Fermer', { duration: 5000 });
       }
     });
   }
@@ -227,8 +256,8 @@ export class AppointmentList implements OnInit{
         this.snackBar.open('Rendez-vous annulé avec succès', 'Fermer', { duration: 3000 });
         this.loadAppointments();
       },
-      error: () => {
-        this.snackBar.open('Erreur lors de l\'annulation', 'Fermer', { duration: 3000 });
+      error: (err) => {
+        this.snackBar.open(`Erreur: ${err.message}`, 'Fermer', { duration: 5000 });
       }
     });
   }
@@ -239,8 +268,8 @@ export class AppointmentList implements OnInit{
         this.snackBar.open('Rendez-vous marqué comme terminé', 'Fermer', { duration: 3000 });
         this.loadAppointments();
       },
-      error: () => {
-        this.snackBar.open('Erreur lors de la mise à jour', 'Fermer', { duration: 3000 });
+      error: (err) => {
+        this.snackBar.open(`Erreur: ${err.message}`, 'Fermer', { duration: 5000 });
       }
     });
   }
@@ -259,6 +288,4 @@ export class AppointmentList implements OnInit{
         return '';
     }
   }
-
-
 }
